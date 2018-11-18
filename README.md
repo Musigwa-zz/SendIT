@@ -13,11 +13,11 @@ This project is composed or can be classified into two great parts.
 ## The UI template(web pages) is here
 
 The UI template is deployed to github pages and can be found on the following link
-=> https://musigwa.github.io/SendIT-API/
+=> https://musigwa.github.io/SendIT/
 
 ## SendIT-API
 
-SendIT-API is a courier service delivery nodejs/express API server that helps my sendIT https://musigwa.github.io/SendIT-API/ web application and/or any other third-party applications to get all the RESTFUL functionalities of this service.
+SendIT-API is a courier service delivery nodejs/express API server that helps my sendIT https://musigwa.github.io/SendIT/ web application and/or any other third-party applications to get all the RESTFUL functionalities of this service.
 
 ## Here is also the Heroku link of the server
 
