@@ -4,4 +4,5 @@ yarn.*
 yarn-error.*
 coverage
 .nyc_output
-todo.md
+TODO.md
+PR.md
