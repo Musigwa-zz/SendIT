@@ -4,7 +4,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url("../assets/images/blur.jpg  ");
+  background-image: url("../images/blur.jpg  ");
   background-repeat: no-repeat;
   height: 100vh;
   width: 100vw;
