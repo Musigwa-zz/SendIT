@@ -51,7 +51,6 @@ Or if you want to contribute to this repo, please pull the request to join me.
 ## Having trouble using this project(?)
 
 1. Email: pacifique.musigwa@gmail.com
-2. Mobile || Whatsapp: +250785782928
-3. Twitter: #PacificMusigwa
+2. Twitter: #PacificMusigwa
 
 ### Thanks all my followers and just feel free to raise questions if any
