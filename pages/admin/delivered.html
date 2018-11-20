@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>SendIT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="shortcut icon"
+      href="../../assets/icons/favicon.ico"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900|Cormorant+Garamond:300,300i,400,400i,500,500i,600,600i,700,700i"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      media="screen"
+      href="../../css/common.css"
+    />
+    <link rel="stylesheet" type="text/css" href="../../css/new-order.css" />
+    <script src="../../js/common.js"></script>
+  </head>
+
+  <body>
+    <!--
+      ################################## TOP NAVBAR SECTION #####################################
+    -->
+    <section class="top-nav">
+      <div class="top-nav-left">
+        <a href="settings.html" class="svg" onclick="">
+          <img src="../../assets/icons/settings.png" alt="logo" />
+        </a>
+        <a href="delivered.html" class="svg" onclick="">
+          <img src="../../assets/icons/delivered.png" alt="logo" />
+        </a>
+        <a href="in-transit.html" class="svg" onclick="">
+          <img class="mini" src="../../assets/icons/transit.png" alt="logo" />
+        </a>
+        <a href="uncofirmed.html" class="svg" onclick="">
+          <img src="../../assets/icons/await.png" alt="logo" />
+        </a>
+        <a href="index.html" class="svg" onclick="">
+          <img src="../../assets/icons/dashboard.png" alt="logo" />
+        </a>
+      </div>
+      <div class="top-nav-right">
+        <div class="notif-container">
+          <a href="#" class="svg" onclick="">
+            <span class="notif-number">44</span>
+            <img src="../../assets/icons/notification.png" alt="logo" />
+          </a>
+        </div>
+        <div class="dropdown">
+          <h2 class="user-name">musigwa</h2>
+          <div class="avatar-cont">
+            <img
+              class="user-avatar"
+              src="../../assets/images/background.jpg"
+              alt="logo"
+            />
+          </div>
+          <div class="dropdown-content">
+            <a class="dropdown-item" href="#">profile</a>
+            <a class="dropdown-item" href="#">settings</a>
+            <a class="dropdown-item" href="../authentication/login.html">logout</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!--
+      ###########################################################################################
+    -->
+
+    <!--
+      ################################## LEFT SIDE NAV MENUS #####################################
+    -->
+    <section class="side-nav">
+      <a href="index.html">
+        <div class="side-option">
+          <img
+            class="navbar-icon"
+            src="../../assets/icons/dashboard.png"
+            alt="logo"
+          />
+          <h1>overview</h1>
+        </div>
+      </a>
+      <a href="uncofirmed.html">
+        <div class="side-option">
+          <img class="navbar-icon" src="../../assets/icons/await.png" alt="logo" />
+          <h1>unconfirmed</h1>
+        </div>
+      </a>
+      <a href="in-transit.html">
+        <div class="side-option">
+          <img
+            class="navbar-icon"
+            src="../../assets/icons/transit.png "
+            alt="logo"
+          />
+          <h1>in transit</h1>
+        </div>
+      </a>
+      <a href="delivered.html">
+        <div class="side-option highlighted">
+          <img
+            class="navbar-icon"
+            src="../../assets/icons/delivered.png"
+            alt="logo"
+          />
+          <h1>delivered</h1>
+        </div>
+      </a>
+      <a href="settings.html">
+        <div class="side-option">
+          <img
+            class="navbar-icon"
+            src="../../assets/icons/settings.png"
+            alt="logo"
+          />
+          <h1>settings</h1>
+        </div>
+      </a>
+    </section>
+    <!--
+      ###########################################################################################
+    -->
+
+    <!--
+      ################################## CENTER CONTENTS SECTION ################################
+    -->
+    <section class="content">
+      <!-- Monthly overview top component -->
+      <div class="overview">
+        <div>
+          <div class="head-line">
+            <img
+              class="deliver"
+              src="../../assets/icons/await-mini.png "
+              alt="logo"
+            />
+            <p>unconfirmed</p>
+          </div>
+          <div class="data">45</div>
+        </div>
+        <div>
+          <div class="head-line">
+            <img
+              class="transit"
+              src="../../assets/icons/transit-mini.png "
+              alt="logo"
+            />
+            <p>transit</p>
+          </div>
+          <div class="data">80</div>
+        </div>
+        <div>
+          <div class="head-line">
+            <img
+              class="deliver"
+              src="../../assets/icons/delivered-mini.png "
+              alt="logo"
+            />
+            <p>delivered</p>
+          </div>
+          <div class="data">12</div>
+        </div>
+      </div>
+      <!-- End of the overview component -->
+
+      <div class="lg-card">
+        <div class="lg-card-content">
+          <div class="data-table">
+            <table>
+              <tr>
+                <th>order id</th>
+                <th>recipient names</th>
+                <th>recipient phone</th>
+                <th>pickup location</th>
+                <th>destination</th>
+                <th>timestamp</th>
+              </tr>
+              <tr>
+                <td>1516239022</td>
+                <td>Alfreds Futterkiste</td>
+                <td>+250785782928</td>
+                <td>Gasabo</td>
+                <td>KG 632 St, 10Av</td>
+                <td>Wed, 31 Oct 2018</td>
+              </tr>
+              <tr>
+                <td>1516239022</td>
+                <td>Alfreds Futterkiste</td>
+                <td>+250785782928</td>
+                <td>Gasabo</td>
+                <td>KG 632 St, 10Av</td>
+                <td>Wed, 31 Oct 2018</td>
+              </tr>
+              <tr>
+                <td>1516239022</td>
+                <td>Alfreds Futterkiste</td>
+                <td>+250785782928</td>
+                <td>Gasabo</td>
+                <td>KG 632 St, 10Av</td>
+                <td>Wed, 31 Oct 2018</td>
+              </tr>
+              <tr>
+                <td>1516239022</td>
+                <td>Alfreds Futterkiste</td>
+                <td>+250785782928</td>
+                <td>Gasabo</td>
+                <td>KG 632 St, 10Av</td>
+                <td>Wed, 31 Oct 2018</td>
+              </tr>
+              <tr>
+                <td>1516239022</td>
+                <td>Alfreds Futterkiste</td>
+                <td>+250785782928</td>
+                <td>Gasabo</td>
+                <td>KG 632 St, 10Av</td>
+                <td>Wed, 31 Oct 2018</td>
+              </tr>
+              <tr>
+                <td>1516239022</td>
+                <td>Alfreds Futterkiste</td>
+                <td>+250785782928</td>
+                <td>Gasabo</td>
+                <td>KG 632 St, 10Av</td>
+                <td>Wed, 31 Oct 2018</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>

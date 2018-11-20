@@ -1,0 +1,107 @@
+@import url('./styles/common.css');
+* {
+  text-decoration: none;
+}
+
+body {
+  display: flex;
+  padding: 0px;
+  margin: 0px;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.nf-banner {
+  width: 100%;
+  height: calc(100vh - 100px);
+  background-image: url('../assets/images/cat.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  display: table;
+}
+
+.vertical-center {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.nf-banner h2 {
+  font-family: Catamaran;
+  font-size: 30px; /*50px*/
+  font-weight: 800;
+  color: white;
+  line-height: 50px; /*70px*/
+  text-align: center;
+  text-shadow: 2px 2px 8px #111;
+}
+
+.nf-banner h1 {
+  font-family: Cormorant Garamond;
+  font-size: 28px;
+  font-weight: 200;
+  color: white;
+  line-height: 40px; /*40px*/
+  font-style: italic;
+  text-align: center;
+  text-shadow: 2px 2px 8px #111;
+}
+
+/* footer */
+
+footer {
+  padding: 10px;
+  width: calc(100% - 20px);
+  background-color: #111;
+  /* margin-top: 20px; */
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  /* overflow: hidden; */
+}
+@media only screen and (min-width: 1000px) {
+  .nf-banner h2 {
+    font-family: Catamaran;
+    font-size: 50px; /*30px*/
+    font-weight: 800;
+    color: white;
+    line-height: 70px; /*50px*/
+    text-align: center;
+    text-shadow: 2px 2px 8px #111;
+  }
+
+  .nf-banner h1 {
+    font-family: Cormorant Garamond;
+    font-size: 30px;
+    font-weight: 200;
+    color: white;
+    line-height: 40px;
+    font-style: italic;
+    text-align: center;
+    text-shadow: 2px 2px 8px #111;
+  }
+
+  /* footer */
+
+  footer {
+    padding: 10px;
+    width: calc(100% - 20px);
+    background-color: #111;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  footer p {
+    font-family: Cormorant Garamond;
+    font-size: 30px;
+    font-weight: 900;
+    color: white;
+    padding-bottom: 5px;
+    text-transform: capitalize;
+    line-height: 40px;
+    /* font-style: italic; */
+    text-align: center;
+  }
+}
