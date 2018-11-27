@@ -33,9 +33,9 @@ parcels.put(
   updateParcel
 );
 
-// /*********** CHANGE THE ORDER'S DESTINATION *********************************/
+// /*********** CHANGE THE ORDER'S STATUS *************************************/
 
-parcels.put(`${entry}/:id/destination`, updateParcel);
+parcels.put(`${entry}/:id/status`, updateParcel);
 
 // /************************ END OF PARCELS APIs ******************************/
 
