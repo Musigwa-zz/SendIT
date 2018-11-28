@@ -15,7 +15,7 @@ const getAll = (req, res) => {
   Parcel.find(sender !== null ? { sender, ...req.query } : req.query)
     .then(parcels => (parcels.length
       ? res.status(200).json({ error: null, parcels })
-      : res.status(204).json({ error: { message: 'no content' } })))
+      : res.status(204).json({ error: { message: 'No content' } })))
     .catch(err => res.status(400).json({ error: err }));
 };
 
@@ -41,7 +41,7 @@ const updateParcel = (req, res) => {
         ) {
           res.status(400).json({
             error: {
-              message: "can't update the delivered or cancelled order",
+              message: "Can't update the delivered or cancelled order",
               name: 'ValidationError'
             }
           });
@@ -57,7 +57,7 @@ const updateParcel = (req, res) => {
       .catch(err => res.status(400).json({ error: err }));
   } else {
     return res.status(400).json({
-      error: { message: "can't empty the record", name: 'ValidationError' }
+      error: { message: "Can't empty the record", name: 'ValidationError' }
     });
   }
 };
