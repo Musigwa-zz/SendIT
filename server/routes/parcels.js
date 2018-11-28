@@ -32,10 +32,17 @@ parcels.put(
   },
   updateParcel
 );
+// /*********** CHANGE THE ORDER'S DESTINATION ********************************/
+
+parcels.put(`${entry}/:id/destination`, updateParcel);
 
 // /*********** CHANGE THE ORDER'S STATUS *************************************/
 
 parcels.put(`${entry}/:id/status`, updateParcel);
+
+// /*********** CHANGE THE ORDER'S PRESENTLOCATION ****************************/
+
+parcels.put(`${entry}/:id/presentLocation`, updateParcel);
 
 // /************************ END OF PARCELS APIs ******************************/
 
