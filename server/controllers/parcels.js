@@ -49,14 +49,14 @@ const updateParcel = (req, res) => {
           Parcel.update({ ...req.body }, { id })
             .then(parcels => {
               const [parcel] = parcels;
-              res.status(201).json({ error: null, parcel });
+              return res.status(201).json({ error: null, parcel });
             })
             .catch(err => res.status(400).json({ error: err }));
         }
       })
       .catch(err => res.status(400).json({ error: err }));
   } else {
-    res.status(400).json({
+    return res.status(400).json({
       error: { message: "can't empty the record", name: 'ValidationError' }
     });
   }
