@@ -8,6 +8,9 @@ const schema = Joi.object().keys({
   recipient_phone: Joi.string()
     .min(10)
     .required(),
+  present_location: Joi.string()
+    .required()
+    .min(1),
   destination: Joi.string().required(),
   origin: Joi.string()
     .required()
