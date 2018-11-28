@@ -1,4 +1,4 @@
-import Database from '.';
+import Database from '..';
 
 const functions = [
   `CREATE OR REPLACE FUNCTION update_timestamp()

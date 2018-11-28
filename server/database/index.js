@@ -3,10 +3,15 @@ import { Pool } from 'pg';
 import dotEnv from 'dotenv';
 
 dotEnv.config();
+const databaseConfig = {
+  development: process.env.DATABASE_URL_DEV,
+  test: process.env.DATABASE_URL_TEST,
+  production: process.env.DATABASE_URL
+};
 export default class Database {
   constructor(schema, tableName) {
-    const { DATABASE_URL: connectionString } = process.env;
-    this.pool = new Pool({ connectionString });
+    // const { DATABASE_URL: connectionString } = process.env;
+    this.pool = new Pool({ connectionString: databaseConfig[process.env.NODE_ENV] });
     this.table = tableName;
     this.schema = schema;
   }

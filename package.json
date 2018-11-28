@@ -6,8 +6,8 @@
   "author": "MUSIGWA Pacifique",
   "license": "MIT",
   "scripts": {
-    "server": "clear && cross-env NODE_ENV=dev nodemon --exec babel-node ./server/index.js",
-    "db": "clear && node --require babel-register ./server/database/prepare.js --exit || true",
+    "server": "clear && cross-env NODE_ENV=development nodemon --exec babel-node ./server/index.js",
+    "db": "clear && node --require babel-register ./server/database/migrations/prepare --exit || true",
     "build": "babel server -d server/dist",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "test": "clear && NODE_ENV=test nyc --reporter=text --reporter=lcov mocha --timeout 25000 --require babel-register {server/tests,server/tests/**}/*.spec.js --exit || true"
