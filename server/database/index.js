@@ -1,10 +1,12 @@
 import Joi from 'joi';
 import { Pool } from 'pg';
-import dbConfig from '../config/db';
+import dotEnv from 'dotenv';
 
+dotEnv.config();
 export default class Database {
-  constructor(schema, tableName, configs = dbConfig.dev) {
-    this.pool = new Pool(configs);
+  constructor(schema, tableName) {
+    const { DATABASE_URL: connectionString } = process.env;
+    this.pool = new Pool({ connectionString });
     this.table = tableName;
     this.schema = schema;
   }
