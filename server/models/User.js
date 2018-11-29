@@ -4,7 +4,7 @@ import Database from '../database';
 // the schema definition of the user
 
 const schema = Joi.object().keys({
-  names: Joi.string()
+  full_name: Joi.string()
     .trim()
     .required()
     .min(3),
@@ -13,12 +13,16 @@ const schema = Joi.object().keys({
     .regex(/^\+?[1-9]\d{1,14}$/)
     .required()
     .min(10),
+  role: Joi.string()
+    .trim()
+    .only('client')
+    .default('client'),
   email: Joi.string()
     .trim()
     .email({ minDomainAtoms: 2 })
     .required(),
   password: Joi.string()
-    .trim() // Eight characters min, at least one[uppercase,lowercase,number]
+    .trim() // Seven characters min, at least one[uppercase,lowercase,number]
     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{7,}$/)
     .required(),
   avatar: Joi.string()

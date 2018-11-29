@@ -12,6 +12,19 @@ export default class Database {
     this.schema = schema;
   }
 
+  checkPassword(args = {}) {
+    return new Promise((resolve, reject) => {
+      const { password: pass } = args;
+      if (args.hasOwnProperty('password')) {
+        bcrypt.hash(pass, 10, (err, password) => {
+          if (err) return reject({ message: 'password failed' });
+          args = { ...args, password };
+          resolve(args);
+        });
+      } else resolve(args);
+    });
+  }
+
   end() {
     return this.pool.end();
   }
@@ -58,30 +71,27 @@ export default class Database {
   // METHOD TO SAVE THE NEW INCOMING DATA //
 
   save(data) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       Joi.validate(data, this.schema)
         .then(res => {
-          const { password: pass } = res;
-          if (res.hasOwnProperty('password')) {
-            bcrypt.hash(pass, 10, (err, password) => {
-              if (err) {
-                reject({ message: 'password failed' });
-              }
-              res.password = password;
-            });
-          }
-          this.connect()
-            .then(client => {
-              const { values, keys, nspace } = this.NamespaceKeyValue(res);
-              client
-                .query(
-                  `INSERT INTO ${this.table}(${keys}) values(${nspace}) returning*`,
-                  values
-                )
-                .then(response => resolve(response.rows[0]))
+          this.checkPassword(res)
+            .then(results => {
+              this.connect()
+                .then(client => {
+                  const { values, keys, nspace } = this.NamespaceKeyValue(results);
+                  client
+                    .query(
+                      `INSERT INTO ${
+                        this.table
+                      }(${keys}) values(${nspace}) returning*`,
+                      values
+                    )
+                    .then(response => resolve(response.rows[0]))
+                    .catch(err => reject(this.createError(err)));
+                })
                 .catch(err => reject(this.createError(err)));
             })
-            .catch(err => reject(this.createError(err)));
+            .catch(err => reject(err));
         })
         .catch(err => {
           const { details, name } = err;
