@@ -1,17 +1,11 @@
 import Joi from 'joi';
 import { Pool } from 'pg';
-import dotEnv from 'dotenv';
+import database from '../config/db';
 
-dotEnv.config();
-const databaseConfig = {
-  development: process.env.DATABASE_URL_DEV,
-  test: process.env.DATABASE_URL_TEST,
-  production: process.env.DATABASE_URL
-};
 export default class Database {
   constructor(schema, tableName) {
-    // const { DATABASE_URL: connectionString } = process.env;
-    this.pool = new Pool({ connectionString: databaseConfig[process.env.NODE_ENV] });
+    const { databaseUrl: connectionString } = database;
+    this.pool = new Pool({ connectionString });
     this.table = tableName;
     this.schema = schema;
   }
@@ -42,6 +36,23 @@ export default class Database {
     return { keys, values, lastIndex: lastIndex + 1 };
   }
 
+  NamespaceKeyValue(args = {}) {
+    const resKeys = Object.keys(args);
+    const values = [];
+    let keys = '';
+    let nspace = '';
+    resKeys.map((key, index) => {
+      values.push(args[key]);
+      keys += `${key}`;
+      nspace += `$${index + 1}`;
+      if (index !== resKeys.length - 1) {
+        keys += ',';
+        nspace += ',';
+      }
+    });
+    return { keys, nspace, values };
+  }
+
   // METHOD TO SAVE THE NEW INCOMING DATA //
 
   save(data) {
@@ -50,19 +61,7 @@ export default class Database {
         .then(res => {
           this.connect()
             .then(client => {
-              const resKeys = Object.keys(res);
-              const values = [];
-              let keys = '';
-              let nspace = '';
-              resKeys.map((key, index) => {
-                values.push(res[key]);
-                keys += `${key}`;
-                nspace += `$${index + 1}`;
-                if (index !== resKeys.length - 1) {
-                  keys += ',';
-                  nspace += ',';
-                }
-              });
+              const { values, keys, nspace } = this.NamespaceKeyValue(res);
               client
                 .query(
                   `INSERT INTO ${this.table}(${keys}) values(${nspace}) returning*`,
@@ -100,7 +99,9 @@ export default class Database {
   findById(id) {
     return new Promise((resolve, reject) => {
       this.find({ id })
-        .then(res => resolve(res[0]))
+        .then(res => (res.length
+          ? resolve(res[0])
+          : reject({ message: 'Not matching item found', name: 'QueryError' })))
         .catch(err => reject(this.createError(err)));
     });
   }
@@ -108,19 +109,14 @@ export default class Database {
   // METHOD TO UPDATE SPECIFIC DATA IN THE COLLECTION FOR A GIVEN ID //
 
   findByIdAndUpdate(id, args = {}) {
-    const { keys, values } = this.createKeyValue(args, ',');
     return new Promise((resolve, reject) => {
       this.findById(id)
-        .then(found => {
-          this.connect()
-            .then(client => client.query(
-              `UPDATE ${this.table} SET ${keys} WHERE id=${found.id} returning*`,
-              values
-            ))
-            .then(res => resolve(res.rows))
-            .catch(err => reject(this.createError(err)));
+        .then(() => {
+          this.update(args, { id })
+            .then(response => resolve(response))
+            .catch(err => reject(err));
         })
-        .catch(err => reject(this.createError(err)));
+        .catch(err => reject(err));
     });
   }
 
@@ -154,29 +150,29 @@ export default class Database {
   findByIdAndRemove(id) {
     return new Promise((resolve, reject) => {
       this.findById(id)
-        .then(found => {
-          this.connect()
-            .then(client => client.query(
-              `DELETE FROM ${this.table} WHERE id=${found.id}LIMIT 1 returning*`
-            ))
-            .then(res => resolve(res.rows))
-            .catch(err => reject(this.createError(err)));
+        .then(() => {
+          this.remove({ id })
+            .then(removed => resolve(removed))
+            .catch(err => reject(err));
         })
-        .catch(err => reject(this.createError(err)));
+        .catch(err => reject(err));
     });
   }
 
   // DELETE ALL RECORDS FROM THE TABLE //
 
-  remove(args = null) {
+  remove(conditions = {}) {
+    const { keys: condKeys, values: condValues } = this.createKeyValue(conditions);
+    const condition = Object.keys(conditions).length ? `WHERE ${condKeys}` : '';
     return new Promise((resolve, reject) => {
-      this.find(args)
-        .then(found => {
-          found.map(elmt => this.store.splice(this.store.indexOf(elmt), 1));
-          if (found === this.store) this.index = 0;
-          resolve(this.store.sort((a, b) => a.updatedAt < b.updatedAt));
+      this.connect()
+        .then(client => {
+          client
+            .query(`DELETE FROM ${this.table} ${condition} returning*`, condValues)
+            .then(res => resolve(res.rows))
+            .catch(err => reject(this.createError(err)));
         })
-        .catch(err => reject(err));
+        .catch(err => reject(this.createError(err)));
     });
   }
 }
