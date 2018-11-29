@@ -1,5 +1,7 @@
 import Joi from 'joi';
 import { Pool } from 'pg';
+import bcrypt from 'bcrypt';
+
 import database from '../config/db';
 
 export default class Database {
@@ -59,6 +61,15 @@ export default class Database {
     return new Promise((resolve, reject) => {
       Joi.validate(data, this.schema)
         .then(res => {
+          const { password: pass } = res;
+          if (res.hasOwnProperty('password')) {
+            bcrypt.hash(pass, 10, (err, password) => {
+              if (err) {
+                reject({ message: 'password failed' });
+              }
+              res.password = password;
+            });
+          }
           this.connect()
             .then(client => {
               const { values, keys, nspace } = this.NamespaceKeyValue(res);
@@ -101,7 +112,7 @@ export default class Database {
       this.find({ id })
         .then(res => (res.length
           ? resolve(res[0])
-          : reject({ message: 'Not matching item found', name: 'QueryError' })))
+          : reject({ message: 'No matching item found', name: 'QueryError' })))
         .catch(err => reject(this.createError(err)));
     });
   }
