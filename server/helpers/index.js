@@ -15,7 +15,9 @@ export default class Helpers {
         : null;
       next();
     } catch (error) {
-      return res.status(401).json({ message: 'access denied' });
+      return res
+        .status(401)
+        .json({ message: 'Provide the correct authentication information' });
     }
   }
 }

@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 
 import User from '../models/User';
 import Helpers from '../helpers';
+import constants from '../config/constants';
 
 // /***************** UPLOADING USER ASSETS ***********************************/
 const storage = multer.diskStorage({
@@ -32,31 +33,39 @@ const createUser = (req, res) => {
   const { file = {} } = req;
   const { path: avatar } = file;
   const {
-    names, phone, email, password: pass
+    names, phone, email, password
   } = req.body;
 
   /** encrypt the password before saving */
-  bcrypt.hash(pass, 10, (err, password) => {
-    if (err) return res.status(500).json({ error: err });
+  // bcrypt.hash(pass, 10, (err, password) => {
+  //   if (err) return res.status(500).json({ message: err.message });
 
-    /** save the new user in the database */
-    User.save({
-      names,
-      phone,
-      email,
-      password,
-      avatar
-    })
-      .then(user => res.status(201).json({
-        error: null,
-        token: Helpers.createToken(
-          { email: user.email, id: user.id },
-          { expiresIn: '1h' }
-        ),
-        id: user.id
-      }))
-      .catch(error => res.status(400).json({ error }));
-  });
+  /** save the new user in the database */
+  User.save({
+    names,
+    phone,
+    email,
+    password,
+    avatar
+  })
+    .then(user => res.status(201).json({
+      message: constants.SUCCESS,
+      token: Helpers.createToken(
+        { email: user.email, id: user.id },
+        { expiresIn: '1h' }
+      )
+    }))
+    .catch(error => {
+      let { message } = error;
+      if (message.includes('phone')) {
+        message = 'The phone should be [10 min, 14 max] digits and/or starts with + symbol';
+      }
+      if (message.includes('password')) {
+        message = 'The password should be 7 characters minimum with at least one[uppercase,lowercase,number]';
+      }
+      return res.status(400).json({ message });
+    });
+  // });
 };
 
 // /***************** THE USER ACCOUNT LOGIN ********************************/
@@ -68,23 +77,17 @@ const login = (req, res) => {
       bcrypt.compare(pass, users[0].password, (err, same) => {
         if (same === true) {
           return res.status(200).json({
-            error: null,
+            message: constants.SUCCESS,
             token: Helpers.createToken(
               { email: users[0].email, id: users[0].id },
               { expiresIn: '1h' }
-            ),
-            id: users[0].id
+            )
           });
         }
-        return res.status(401).json({
-          error: {
-            name: 'ValidationError',
-            message: 'email or password mismatch!'
-          }
-        });
+        return res.status(401).json({ message: 'email or password mismatch!' });
       });
     })
-    .catch(err => res.status(401).json({ error: err }));
+    .catch(err => res.status(401).json({ message: err.message }));
 };
 
 // /************************ EXPORT ALL USERS AUTH HANDLERS ******************/
