@@ -1,3 +1,4 @@
+-- create the user parcels
 CREATE TABLE
 IF NOT EXISTS users
 (
@@ -21,6 +22,8 @@ IF NOT EXISTS users
     UNIQUE
 (email,phone)
 );
+
+-- create the parcels table
 CREATE TABLE
 IF NOT EXISTS parcels
 (
@@ -48,3 +51,36 @@ IF NOT EXISTS parcels
     updatedat timestamp NOT NULL DEFAULT now
 ()
 );
+
+-- create the timestamp function
+CREATE OR REPLACE FUNCTION update_timestamp
+()
+  RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updatedat = now
+();
+RETURN NEW;
+END;
+  $$ language 'plpgsql';
+
+--   drop the existing user_timestamp trigger
+DROP TRIGGER IF EXISTS user_timestamp
+ON users;
+
+-- recreate it 
+CREATE TRIGGER user_timestamp BEFORE
+UPDATE
+  ON parcels FOR EACH ROW
+EXECUTE PROCEDURE update_timestamp
+();
+
+--   drop the existing parcels_timestamp trigger
+DROP TRIGGER IF EXISTS parcels_timestamp
+ON parcels;
+
+-- recreate it 
+CREATE TRIGGER parcels_timestamp BEFORE
+UPDATE
+  ON parcels FOR EACH ROW
+EXECUTE PROCEDURE update_timestamp
+();
