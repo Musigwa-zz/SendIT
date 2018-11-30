@@ -9,6 +9,13 @@ const newParcel = {
   sender: '0'
 };
 
+const newUser = {
+  full_name: 'ATETE Gloria',
+  phone: '+250785548963',
+  email: 'gloria@gmail.com',
+  password: 'pro247SENDIT'
+};
+
 const baseUrl = '/api/v1';
 
-export { newParcel, baseUrl };
+export { newParcel, newUser, baseUrl };

@@ -10,7 +10,7 @@ const all = Router();
 
 const entryPoint = Router();
 entryPoint.get('/', (req, res) => {
-  res.status(200).json({ error: null, message: 'welcome' });
+  res.status(200).json({ message: 'welcome' });
 });
 
 /** ********* UPLOADS ENDPOINT ************************** */

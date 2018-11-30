@@ -18,27 +18,20 @@ describe('/GET server', () => {
       .end((err, res) => {
         res.should.have.status(200);
         res.body.should.be.a('object');
-        res.body.should.have.property('error', null, 'expected error to be null');
         res.body.should.have
           .property('message')
           .eql(exp.msg, `expected message property to be '${exp.msg}'`);
         done();
       });
   });
-  it('it should return an object with property error', done => {
+  it('it should return an object with error message property', done => {
     chai
       .request(server)
-      .get(`${baseUrl}/unknown`)
+      .get(`${baseUrl}unkown`)
       .end((err, res) => {
         res.should.have.status(404);
         res.body.should.be.a('object');
-        res.body.should.have.property('error');
-        res.body.error.should.have.property(
-          'name',
-          'UrlError',
-          'expected error name to be UrlError'
-        );
-        res.body.error.should.have.property('message').contains('invalid url');
+        res.body.should.have.property('message').contains('invalid url');
         done();
       });
   });

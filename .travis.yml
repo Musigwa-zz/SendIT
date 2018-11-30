@@ -4,6 +4,20 @@ node_js:
 cache:
   directories:
     - 'node_modules'
-script: npm test
+addons:
+  postgresql: '9.6'
+services:
+  - postgresql
+before_install:
+  - psql -c 'create database send_it_test' -U postgres
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+script:
+  - npm run migratest
+  - npm test
 after_success:
   - npm run coveralls
