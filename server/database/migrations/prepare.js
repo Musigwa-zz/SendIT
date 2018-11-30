@@ -47,71 +47,57 @@ const tables = [
 
 const db = new Database(null, null);
 (() => {
-  db.connect()
-    .then(client => {
-      // create the database functions
-      functions.forEach(async funcQuery => {
-        await client
-          .query(funcQuery)
-          .then(res => console.log(
-            `Function "${funcQuery.slice(
-              funcQuery.indexOf('ON') + 3,
-              funcQuery.indexOf('(')
-            )}" ${res.command}D`
-          ))
-          .catch(err => console.log(err));
+  // creating the tables
+  tables.forEach(async tableQuery => {
+    db.createQuery(tableQuery)
+      .then(res => {
+        console.log(
+          `Table "${tableQuery.slice(
+            tableQuery.indexOf('TS') + 3,
+            tableQuery.indexOf('(')
+          )}" ${res.command}D`
+        );
+      })
+      .catch(err => {
+        console.log(err);
       });
-
-      // create the database triggers
-      triggers.forEach(async trigQuery => {
-        await client
-          .query(
-            `DROP TRIGGER IF EXISTS ${trigQuery.slice(
-              15,
+  });
+  // creating the function
+  functions.forEach(async funcQuery => {
+    db.createQuery(funcQuery)
+      .then(res => {
+        console.log(
+          `Function "${funcQuery.slice(
+            funcQuery.indexOf('ON') + 3,
+            funcQuery.indexOf('(')
+          )}" ${res.command}D`
+        );
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  });
+  // creating the triggers
+  triggers.forEach(async trigQuery => {
+    db.createQuery(
+      `DROP TRIGGER IF EXISTS ${trigQuery.slice(
+        15,
+        trigQuery.indexOf('BEFORE') - 1
+      )} ${trigQuery.slice(
+        trigQuery.indexOf('ON'),
+        trigQuery.indexOf('FOR EACH') - 1
+      )}`
+    )
+      .then(async () => {
+        db.createQuery(trigQuery)
+          .then(res => console.log(
+            `Trigger "${trigQuery.slice(
+              trigQuery.indexOf('GER') + 3,
               trigQuery.indexOf('BEFORE') - 1
-            )} ${trigQuery.slice(
-              trigQuery.indexOf('ON'),
-              trigQuery.indexOf('FOR EACH') - 1
-            )}`
-          )
-          .then(async () => {
-            await client
-              .query(trigQuery)
-              .then(res => console.log(
-                `Trigger "${trigQuery.slice(
-                  trigQuery.indexOf('GER') + 3,
-                  trigQuery.indexOf('BEFORE') - 1
-                )}" ${res.command}D`
-              ))
-              .catch(err => console.log(err));
-          })
-          .catch(err => console.log(err));
-      });
-
-      // create all of the required tables
-      tables.forEach(async tableQuery => {
-        await client
-          .query(tableQuery)
-          .then(res => console.log(
-            `Table "${tableQuery.slice(
-              tableQuery.indexOf('TS') + 3,
-              tableQuery.indexOf('(')
             )}" ${res.command}D`
           ))
           .catch(err => console.log(err));
-      });
-
-      // end the database connection
-      db.end();
-    })
-    .catch(err => console.log(err));
-})();
-
-(() => {
-  db.connect().then(client => {
-    client
-      .query('SELECT * FROM users;')
-      .then(res => console.log(res.rows))
-      .catch(er => console.log(er.error));
+      })
+      .catch(err => console.log(err));
   });
 })();
