@@ -5,8 +5,10 @@ import constants from '../config/constants';
 
 const createParcel = (req, res) => {
   const { role, id: sender } = req.user;
+  const unit = 2;
   if (role === 'client') {
-    Parcel.save({ ...req.body, sender })
+    const { weight } = req.body;
+    Parcel.save({ ...req.body, price: unit * weight, sender })
       .then(parcel => res.status(201).json({ message: constants.SUCCESS, parcel }))
       .catch(err => {
         let { message } = err;
