@@ -11,7 +11,7 @@
     "server": "yarn predev && nodemon --exec babel-node ./server/index.js",
     "migratedev": "yarn predev && node --require babel-register ./server/database/migrations/prepare --exit",
     "migratest": "NODE_ENV=test node --require babel-register ./server/database/migrations/prepare --exit",
-    "prestart": "cat server/database/migrations/tables.sql | heroku pg:psql -a sendit-api",
+    "prestart": "cat server/database/migrations/seeds.sql | heroku pg:psql -a sendit-api",
     "build": "babel server -d server/dist",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "test": "yarn pretest && nyc --reporter=text --reporter=lcov mocha --timeout 25000 --require babel-register {server/tests,server/tests/**}/*.test.js --exit || true"
