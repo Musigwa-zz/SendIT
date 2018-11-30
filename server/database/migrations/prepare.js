@@ -49,7 +49,8 @@ const db = new Database(null, null);
 (() => {
   // creating the tables
   tables.forEach(async tableQuery => {
-    db.createQuery(tableQuery)
+    await db
+      .createQuery(tableQuery)
       .then(res => {
         console.log(
           `Table "${tableQuery.slice(
@@ -64,7 +65,8 @@ const db = new Database(null, null);
   });
   // creating the function
   functions.forEach(async funcQuery => {
-    db.createQuery(funcQuery)
+    await db
+      .createQuery(funcQuery)
       .then(res => {
         console.log(
           `Function "${funcQuery.slice(
@@ -79,15 +81,16 @@ const db = new Database(null, null);
   });
   // creating the triggers
   triggers.forEach(async trigQuery => {
-    db.createQuery(
-      `DROP TRIGGER IF EXISTS ${trigQuery.slice(
-        15,
-        trigQuery.indexOf('BEFORE') - 1
-      )} ${trigQuery.slice(
-        trigQuery.indexOf('ON'),
-        trigQuery.indexOf('FOR EACH') - 1
-      )}`
-    )
+    await db
+      .createQuery(
+        `DROP TRIGGER IF EXISTS ${trigQuery.slice(
+          15,
+          trigQuery.indexOf('BEFORE') - 1
+        )} ${trigQuery.slice(
+          trigQuery.indexOf('ON'),
+          trigQuery.indexOf('FOR EACH') - 1
+        )}`
+      )
       .then(async () => {
         db.createQuery(trigQuery)
           .then(res => console.log(
