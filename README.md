@@ -1,6 +1,9 @@
-[![Build Status](https://travis-ci.org/Musigwa/SendIT-API.svg?branch=parcels-management)](https://travis-ci.org/Musigwa/SendIT-API)
-[![Coverage Status](https://coveralls.io/repos/github/Musigwa/SendIT-API/badge.svg?branch=parcels-management)](https://coveralls.io/github/Musigwa/SendIT-API?branch=parcels-management)
-[![Maintainability](https://api.codeclimate.com/v1/badges/eb485abfa6f431f0033e/maintainability)](https://codeclimate.com/github/Musigwa/SendIT-API/maintainability)
+[![Build Status](https://travis-ci.org/Musigwa/SendIT.svg?branch=develop)](https://travis-ci.org/Musigwa/SendIT)
+
+[![Coverage Status](https://coveralls.io/repos/github/Musigwa/SendIT/badge.svg?branch=develop)](https://coveralls.io/github/Musigwa/SendIT?branch=develop)
+
+[![Maintainability](https://api.codeclimate.com/v1/badges/9c5ee554657535b04620/maintainability)](https://codeclimate.com/github/Musigwa/SendIT/maintainability)
+
 [![Test Coverage](https://api.codeclimate.com/v1/badges/9c5ee554657535b04620/test_coverage)](https://codeclimate.com/github/Musigwa/SendIT/test_coverage)
 
 # SendIT
