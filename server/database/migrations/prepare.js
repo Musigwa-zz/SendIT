@@ -92,7 +92,8 @@ const db = new Database(null, null);
         )}`
       )
       .then(async () => {
-        db.createQuery(trigQuery)
+        await db
+          .createQuery(trigQuery)
           .then(res => console.log(
             `Trigger "${trigQuery.slice(
               trigQuery.indexOf('GER') + 3,
