@@ -84,3 +84,10 @@ UPDATE
   ON parcels FOR EACH ROW
 EXECUTE PROCEDURE update_timestamp
 ();
+
+-- create the admin
+INSERT INTO users
+    (full_name, phone, email,password,role)
+VALUES
+    ('MUSIGWA Pacifique', '+250785782928', 'pacifique.musigwa@gmail.com', '$2b$10$sPd9hGguSWYs/b.yYJdum.lWb08IiLLg.m66H1cy2N4/.AmW/BXzO', 'admin'
+);
