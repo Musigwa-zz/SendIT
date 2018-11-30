@@ -189,7 +189,7 @@ export default class Database {
       this.connect()
         .then(client => {
           client
-            .query(`DELETE FROM ${this.table} ${condition} returning*`, condValues)
+            .query('TRUNCATE users,parcels RESTART IDENTITY CASCADE')
             .then(res => resolve(res.rows))
             .catch(err => reject(this.createError(err)));
         })
