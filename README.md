@@ -1,9 +1,6 @@
 [![Build Status](https://travis-ci.org/Musigwa/SendIT.svg?branch=develop)](https://travis-ci.org/Musigwa/SendIT)
-
 [![Coverage Status](https://coveralls.io/repos/github/Musigwa/SendIT/badge.svg?branch=develop)](https://coveralls.io/github/Musigwa/SendIT?branch=develop)
-
 [![Maintainability](https://api.codeclimate.com/v1/badges/9c5ee554657535b04620/maintainability)](https://codeclimate.com/github/Musigwa/SendIT/maintainability)
-
 [![Test Coverage](https://api.codeclimate.com/v1/badges/9c5ee554657535b04620/test_coverage)](https://codeclimate.com/github/Musigwa/SendIT/test_coverage)
 
 # SendIT
