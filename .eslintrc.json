@@ -22,6 +22,7 @@
     "no-prototype-builtins": "off",
     "no-param-reassign": "off",
     "array-callback-return": "off",
+    "no-fallthrough": "off",
     "no-return-await": "off",
     "arrow-parens": "off",
     "class-methods-use-this": "off"

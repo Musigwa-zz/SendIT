@@ -196,6 +196,23 @@ export default class Database {
         .catch(err => reject(this.createError(err)));
     });
   }
+
+  createQuery(migrationText) {
+    const { databaseUrl: connectionString } = database;
+    const pool = new Pool({ connectionString });
+    return new Promise((resolve, reject) => {
+      pool
+        .query(migrationText)
+        .then(response => {
+          resolve(response);
+          pool.end();
+        })
+        .catch(err => {
+          reject(err);
+          pool.end();
+        });
+    });
+  }
 }
 
 // END OF THE COLLECTIONS CLASS //
