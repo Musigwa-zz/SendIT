@@ -9,8 +9,8 @@
     "pretest": "clear && NODE_ENV=test",
     "predev": "clear && NODE_ENV=development",
     "server": "yarn predev && nodemon --exec babel-node ./server/index.js",
-    "migratedev": "yarn predev && node --require babel-register ./server/database/migrations/prepare --exit || true",
-    "migratest": "yarn pretest node --require babel-register ./server/database/migrations/prepare --exit || true",
+    "migratedev": "yarn predev && node --require babel-register ./server/database/migrations/prepare --exit",
+    "migratest": "NODE_ENV=test node --require babel-register ./server/database/migrations/prepare --exit",
     "build": "babel server -d server/dist",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "test": "yarn pretest && nyc --reporter=text --reporter=lcov mocha --timeout 25000 --require babel-register {server/tests,server/tests/**}/*.test.js --exit || true"
