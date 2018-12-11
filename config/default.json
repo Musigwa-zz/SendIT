@@ -1,0 +1,4 @@
+{
+  "JWT_KEY": "JWT_DEFAULT_KEY",
+  "PORT": 5070
+}

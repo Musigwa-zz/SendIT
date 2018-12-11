@@ -1,5 +1,4 @@
 import Parcel from '../models/Parcel';
-import constants from '../config/constants';
 
 // /***************** CREATE THE PARCEL ***************************************/
 
@@ -7,7 +6,7 @@ const createParcel = (req, res) => {
   const { role, id: sender } = req.user;
   if (role === 'client') {
     Parcel.save({ ...req.body, sender })
-      .then(parcel => res.status(201).json({ message: constants.SUCCESS, parcel }))
+      .then(parcel => res.status(201).json({ message: 'success', parcel }))
       .catch(err => {
         let { message } = err;
         if (message.includes('phone')) {
@@ -24,7 +23,7 @@ const getAll = (req, res) => {
   const { id: sender = null } = req.params;
   Parcel.find(sender !== null ? { sender, ...req.query } : req.query)
     .then(parcels => (parcels.length
-      ? res.status(200).json({ message: constants.SUCCESS, parcels })
+      ? res.status(200).json({ message: 'success', parcels })
       : res.status(204).json({ message: 'No parcel orders created yet' })))
     .catch(err => res.status(400).json({ message: err.message }));
 };
@@ -38,7 +37,7 @@ const getParcel = (req, res) => {
     .then(parcels => {
       const [parcel] = parcels;
       return parcels.length
-        ? res.status(200).json({ message: constants.SUCCESS, parcel })
+        ? res.status(200).json({ message: 'success', parcel })
         : res.status(204).json({ message: `No parcel order matching to id(${id})` });
     })
     .catch(err => res.status(400).json({ message: err.message }));
@@ -65,7 +64,7 @@ const updateParcel = (req, res) => {
           Parcel.update({ ...req.body }, { id })
             .then(parcels => {
               const [parcel] = parcels;
-              return res.status(201).json({ message: constants.SUCCESS, parcel });
+              return res.status(201).json({ message: 'success', parcel });
             })
             .catch(err => res.status(400).json({ message: err.message }));
         })

@@ -1,1 +1,1 @@
-web: nodemon --exec babel-node ./server/index.js
+web: DEBUG=sendit:start,sendit:db nodemon --exec babel-node ./server/index.js

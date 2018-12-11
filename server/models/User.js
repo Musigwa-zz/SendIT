@@ -3,7 +3,7 @@ import Database from '../database';
 
 // the schema definition of the user
 
-const schema = Joi.object().keys({
+const schema = {
   full_name: Joi.string()
     .trim()
     .required()
@@ -28,7 +28,7 @@ const schema = Joi.object().keys({
   avatar: Joi.string()
     .trim()
     .uri()
-});
+};
 
 // exporting the model of users
 

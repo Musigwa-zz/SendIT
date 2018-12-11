@@ -1,42 +1,50 @@
 import Joi from 'joi';
 import { Pool } from 'pg';
-import bcrypt from 'bcrypt';
+import config from 'config';
+import dbDebugger from 'debug';
 
-import database from '../config/db';
-
+const debug = dbDebugger('sendit:db');
+const connectionString = config.get('DB_URL');
+debug(`DB_URL: ${connectionString}`);
 export default class Database {
   constructor(schema, tableName) {
-    const { databaseUrl: connectionString } = database;
-    this.pool = new Pool({ connectionString });
     this.table = tableName;
     this.schema = schema;
   }
 
-  checkPassword(args = {}) {
-    return new Promise((resolve, reject) => {
-      const { password: pass } = args;
-      if (args.hasOwnProperty('password')) {
-        bcrypt.hash(pass, 10, (err, password) => {
-          if (err) return reject({ message: 'password failed' });
-          args = { ...args, password };
-          resolve(args);
-        });
-      } else resolve(args);
-    });
-  }
-
-  end() {
-    return this.pool.end();
-  }
+  // UTIL METHOD FOR CUATOMIZING THE ERROR //
 
   createError(err) {
     const { detail: message, name, ...rest } = err;
     return { message, name: 'ValidationError', ...rest };
   }
 
-  connect() {
-    return this.pool.connect();
+  // CREATE THE CLIENT CONNECTION AND EXPOSE A QUERY //
+
+  query(queryStream, values = []) {
+    const pool = new Pool({ connectionString });
+    return new Promise(async (resolve, reject) => {
+      pool.connect().then(client => client
+        .query(queryStream, values)
+        .then(res => {
+          client.release();
+          resolve(res.rows[0]);
+        })
+        .catch(err => {
+          client.release();
+          reject(this.createError(err));
+        }));
+      await pool.end();
+    });
   }
+
+  // UTIL METHOD FOR VALIDATING THE DATA WITH THE SCHEMA //
+
+  validate(data) {
+    return Joi.validate(data, this.schema);
+  }
+
+  // UTIL METHOD FOR CREATING THE {KEY, VALUE} PAIR //
 
   createKeyValue(args, operator = 'AND', prevIndex = 0) {
     const argsKeys = Object.keys(args);
@@ -50,6 +58,8 @@ export default class Database {
     });
     return { keys, values, lastIndex: lastIndex + 1 };
   }
+
+  // UTIL METHOD FOR CREATING THE {KEY, VALUE, NAMESPACE} PAIR //
 
   NamespaceKeyValue(args = {}) {
     const resKeys = Object.keys(args);
@@ -68,54 +78,25 @@ export default class Database {
     return { keys, nspace, values };
   }
 
-  // METHOD TO SAVE THE NEW INCOMING DATA //
+  // PUSH THE NEW OBJECT INTO THE DATABSE'S DEFINED TABLE //
 
   save(data) {
-    return new Promise(async (resolve, reject) => {
-      Joi.validate(data, this.schema)
-        .then(res => {
-          this.checkPassword(res)
-            .then(results => {
-              this.connect()
-                .then(client => {
-                  const { values, keys, nspace } = this.NamespaceKeyValue(results);
-                  client
-                    .query(
-                      `INSERT INTO ${
-                        this.table
-                      }(${keys}) values(${nspace}) returning*`,
-                      values
-                    )
-                    .then(response => resolve(response.rows[0]))
-                    .catch(err => reject(this.createError(err)));
-                })
-                .catch(err => reject(this.createError(err)));
-            })
-            .catch(err => reject(err));
-        })
-        .catch(err => {
-          const { details, name } = err;
-          return reject({ name, ...details[0] });
-        });
-    });
+    const { values, keys, nspace } = this.NamespaceKeyValue(data);
+    return this.query(
+      `INSERT INTO ${this.table}(${keys}) values(${nspace}) returning*`,
+      values
+    );
   }
 
-  // METHOD TO SEARCH FOR DATA IN THE COLLECTION FOR ANY GIVEN SEARCH QUERIES //
+  // SEARCH FOR RECORDS THAT MATCH THE GIVEN SEARCH QUERIES //
 
   find(args = {}) {
     const { keys, values } = this.createKeyValue(args);
     const condition = Object.keys(args).length ? ` WHERE ${keys}` : '';
-    return new Promise((resolve, reject) => {
-      this.connect().then(client => {
-        client
-          .query(`SELECT * FROM ${this.table}${condition}`, values)
-          .then(data => resolve(data.rows))
-          .catch(err => reject(this.createError(err)));
-      });
-    });
+    return this.query(`SELECT * FROM ${this.table}${condition}`, values);
   }
 
-  // METHOD TO SEARCH FOR SPECIFIC DATA IN THE COLLECTION FOR A GIVEN ID //
+  // SEARCH FOR SPECIFIC RECORD THAT MATCHES THE GIVEN ID //
 
   findById(id) {
     return new Promise((resolve, reject) => {
@@ -127,7 +108,23 @@ export default class Database {
     });
   }
 
-  // METHOD TO UPDATE SPECIFIC DATA IN THE COLLECTION FOR A GIVEN ID //
+  // UPDATE RECORD(S) THAT MATCH(ES) THE GIVEN CONDITION(S) //
+
+  update(args = {}, conditions = {}) {
+    const { keys, values, lastIndex } = this.createKeyValue(args, ',');
+    const { keys: condKeys, values: condValues } = this.createKeyValue(
+      conditions,
+      'AND',
+      lastIndex
+    );
+    const condition = Object.keys(conditions).length ? `WHERE ${condKeys}` : '';
+    return this.query(
+      `UPDATE ${this.table} SET ${keys} ${condition} returning*`,
+      values.concat(condValues)
+    );
+  }
+
+  // UPDATE SPECIFIC RECORD THAT MATCHES THE GIVEN ID //
 
   findByIdAndUpdate(id, args = {}) {
     return new Promise((resolve, reject) => {
@@ -141,9 +138,9 @@ export default class Database {
     });
   }
 
-  // METHOD TO UPDATE RECORDS THST MATCH THE GIVEN CONDITIONS //
+  // DELETE RECORD(S) THAT MATCH(ES) THE GIVEN CONDITION(S) //
 
-  update(args = {}, conditions = {}) {
+  remove(args = {}, conditions = {}) {
     const { keys, values, lastIndex } = this.createKeyValue(args, ',');
     const { keys: condKeys, values: condValues } = this.createKeyValue(
       conditions,
@@ -151,68 +148,21 @@ export default class Database {
       lastIndex
     );
     const condition = Object.keys(conditions).length ? `WHERE ${condKeys}` : '';
-    return new Promise((resolve, reject) => {
-      this.connect()
-        .then(client => {
-          client
-            .query(
-              `UPDATE ${this.table} SET ${keys} ${condition} returning*`,
-              values.concat(condValues)
-            )
-            .then(res => resolve(res.rows))
-            .catch(err => reject(this.createError(err)));
-        })
-        .catch(err => reject(this.createError(err)));
-    });
+    return this.query(
+      `DELETE ${keys} FROM ${this.table} ${condition} returning*`,
+      values.concat(condValues)
+    );
   }
 
-  // METHOD TO REMOVE SPECIFIC DATA IN THE COLLECTION FOR A GIVEN ID //
+  // REMOVE SPECIFIC RECORD THAT MATCHES THE GIVEN ID //
 
   findByIdAndRemove(id) {
-    return new Promise((resolve, reject) => {
-      this.findById(id)
-        .then(() => {
-          this.remove({ id })
-            .then(removed => resolve(removed))
-            .catch(err => reject(err));
-        })
-        .catch(err => reject(err));
-    });
+    return this.remove({ id });
   }
 
   // DELETE ALL RECORDS FROM THE TABLE //
 
-  remove(conditions = {}) {
-    const { keys: condKeys, values: condValues } = this.createKeyValue(conditions);
-    const condition = Object.keys(conditions).length ? `WHERE ${condKeys}` : '';
-    return new Promise((resolve, reject) => {
-      this.connect()
-        .then(client => {
-          client
-            .query('TRUNCATE users,parcels RESTART IDENTITY CASCADE')
-            .then(res => resolve(res.rows))
-            .catch(err => reject(this.createError(err)));
-        })
-        .catch(err => reject(this.createError(err)));
-    });
-  }
-
-  createQuery(migrationText) {
-    const { databaseUrl: connectionString } = database;
-    const pool = new Pool({ connectionString });
-    return new Promise((resolve, reject) => {
-      pool
-        .query(migrationText)
-        .then(response => {
-          resolve(response);
-          pool.end();
-        })
-        .catch(err => {
-          reject(err);
-          pool.end();
-        });
-    });
+  removeAll() {
+    return this.query(`TRUNCATE ${this.table} RESTART IDENTITY CASCADE`);
   }
 }
-
-// END OF THE COLLECTIONS CLASS //

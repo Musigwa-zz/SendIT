@@ -11,6 +11,8 @@
 // // Tests for the [parcels] api endpoints //
 
 // describe('Test all API methods related with parcels', () => {
+// beforeEach(() => {});
+// afterEach(() => server.close());
 //   // clear data before and after any testing
 
 //   beforeEach(async () => await Parcel.remove());

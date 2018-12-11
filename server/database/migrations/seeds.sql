@@ -6,9 +6,9 @@ IF NOT EXISTS users
     full_name VARCHAR
 (30) NOT NULL,
     phone VARCHAR
-(15) NOT NULL,
+(15) NOT NULL UNIQUE,
     email VARCHAR
-(50) NOT NULL,
+(50) NOT NULL UNIQUE,
     password VARCHAR
 (200) NOT NULL,
     role VARCHAR
@@ -18,10 +18,7 @@ IF NOT EXISTS users
     createdat timestamp NOT NULL DEFAULT now
 (),
     updatedat timestamp NOT NULL DEFAULT now
-(),
-    UNIQUE
-(email,phone)
-);
+());
 
 -- create the parcels table
 CREATE TABLE

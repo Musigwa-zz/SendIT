@@ -1,5 +1,7 @@
 import Database from '..';
+import migrationDebugger from 'debug';
 
+const debug = migrationDebugger('sendit:mig');
 const functions = [
   `CREATE OR REPLACE FUNCTION update_timestamp()
   RETURNS TRIGGER AS $$
@@ -20,15 +22,14 @@ const tables = [
   `CREATE TABLE IF NOT EXISTS users(
     id SERIAL PRIMARY KEY,
     full_name VARCHAR(30) NOT NULL,
-    phone VARCHAR(15) NOT NULL,
-    email VARCHAR(50) NOT NULL,
+    phone VARCHAR(15) NOT NULL UNIQUE,
+    email VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(200) NOT NULL,
     role VARCHAR(10) NOT NULL,
     avatar VARCHAR(80) DEFAULT NULL,
     createdat timestamp NOT NULL DEFAULT now(),
-    updatedat timestamp NOT NULL DEFAULT now(),
-    UNIQUE(email,phone)
-)`,
+    updatedat timestamp NOT NULL DEFAULT now()
+  )`,
   `CREATE TABLE IF NOT EXISTS parcels(
     id SERIAL PRIMARY KEY,
     recipient_phone VARCHAR(15) NOT NULL,
@@ -42,7 +43,7 @@ const tables = [
     price numeric NOT NULL CHECK(price > 0),
     createdat timestamp NOT NULL DEFAULT now(),
     updatedat timestamp NOT NULL DEFAULT now()
-)`
+  )`
 ];
 
 const db = new Database(null, null);
@@ -50,39 +51,31 @@ const db = new Database(null, null);
   // creating the tables
   tables.forEach(async tableQuery => {
     await db
-      .createQuery(tableQuery)
-      .then(res => {
-        console.log(
-          `Table "${tableQuery.slice(
-            tableQuery.indexOf('TS') + 3,
-            tableQuery.indexOf('(')
-          )}" ${res.command}D`
-        );
-      })
-      .catch(err => {
-        console.log(err);
-      });
+      .query(tableQuery)
+      .then(() => debug(
+        `Table "${tableQuery.slice(
+          tableQuery.indexOf('TS') + 3,
+          tableQuery.indexOf('(')
+        )}" CREATED`
+      ))
+      .catch(err => debug(err));
   });
   // creating the function
   functions.forEach(async funcQuery => {
     await db
-      .createQuery(funcQuery)
-      .then(res => {
-        console.log(
-          `Function "${funcQuery.slice(
-            funcQuery.indexOf('ON') + 3,
-            funcQuery.indexOf('(')
-          )}" ${res.command}D`
-        );
-      })
-      .catch(err => {
-        console.log(err);
-      });
+      .query(funcQuery)
+      .then(() => debug(
+        `Function "${funcQuery.slice(
+          funcQuery.indexOf('ON') + 3,
+          funcQuery.indexOf('(')
+        )}" CREATED`
+      ))
+      .catch(err => debug(err));
   });
   // creating the triggers
   triggers.forEach(async trigQuery => {
     await db
-      .createQuery(
+      .query(
         `DROP TRIGGER IF EXISTS ${trigQuery.slice(
           15,
           trigQuery.indexOf('BEFORE') - 1
@@ -91,17 +84,13 @@ const db = new Database(null, null);
           trigQuery.indexOf('FOR EACH') - 1
         )}`
       )
-      .then(async () => {
-        await db
-          .createQuery(trigQuery)
-          .then(res => console.log(
-            `Trigger "${trigQuery.slice(
-              trigQuery.indexOf('GER') + 3,
-              trigQuery.indexOf('BEFORE') - 1
-            )}" ${res.command}D`
-          ))
-          .catch(err => console.log(err));
-      })
-      .catch(err => console.log(err));
+      .then(async () => await db.query(trigQuery))
+      .then(() => debug(
+        `Trigger "${trigQuery.slice(
+          trigQuery.indexOf('GER') + 3,
+          trigQuery.indexOf('BEFORE') - 1
+        )}" CREATED`
+      ))
+      .catch(err => debug(err));
   });
 })();

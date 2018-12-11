@@ -1,13 +1,14 @@
 import { Router } from 'express';
 
 import { createUser, login } from '../controllers/auth';
+import uploads from '../middlewares/uploads';
 
 const auth = Router();
 const entry = '/auth';
 
 // /***************** CREATE THE USER ACCOUNT **********************************/
 
-auth.post(`${entry}/signup`, createUser);
+auth.post(`${entry}/signup`, uploads.single('avatar'), createUser);
 
 // /***************** USER ACCOUNT LOGIN **************************************/
 
