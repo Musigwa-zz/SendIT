@@ -1,12 +1,14 @@
 import bcrypt from 'bcrypt';
-import authDebugger from 'debug';
 import config from 'config';
 import User from '../models/User';
 import Helpers from '../helpers';
+import constants from '../helpers/constants';
+
+const {
+  OK, CREATED, UNAUTHORIZED, BAD_REQUEST
+} = constants.statusCode;
 
 // /***************** CREATE THE USER ***************************************/
-
-const debug = authDebugger('sendit:authctrl');
 
 const createUser = (req, res) => {
   const { file = {}, baseUrl, hostname } = req;
@@ -14,56 +16,37 @@ const createUser = (req, res) => {
   const { password, ...rest } = req.body;
   let avatar;
   if (filename) avatar = `${hostname}:${config.get('PORT')}${baseUrl}/${filename}`;
-
   User.validate({ ...rest, avatar, password })
     .then(results => {
       bcrypt.hash(results.password, 10, (err, hashed) => {
         const { password: pass, ...others } = results;
-        if (err) {
-          debug(err);
-          return res.status(500).json({ message: 'Double check your password' });
-        }
+        if (err) return Helpers.respondWithError(res);
         User.save({ ...others, password: hashed })
-          .then(user => {
-            const token = Helpers.createToken(user);
-            res
-              .header('x-auth-token', token)
-              .status(201)
-              .json({ message: 'User created successfully', token });
-          })
-          .catch(error => {
-            let { message = '' } = error;
-            if (message.includes('phone')) message = 'The phone should be (unique, 10 min, 14 max) digits and/or starts with (+) symbol.';
-            if (message.includes('password')) message = 'The password should be 7 characters minimum with at least one[uppercase,lowercase,number]';
-
-            debug(error);
-            return res.status(400).json({ message });
-          });
+          .then(user => res
+            .header('x-auth-token', Helpers.createToken(user))
+            .status(CREATED)
+            .json({ message: 'User created successfully' }))
+          .catch(error => Helpers.respondWithError(res, { ...error, status: BAD_REQUEST }));
       });
     })
-    .catch(error => {
-      debug(error.details);
-      return res.status(400).json({ message: error.details[0].message });
-    });
+    .catch(error => Helpers.respondWithError(res, { ...error.details[0], status: BAD_REQUEST }));
 };
 
 // /***************** THE USER ACCOUNT LOGIN ********************************/
 
 const login = (req, res) => {
-  const { email: mail, password: pass } = req.body;
-  User.find({ email: mail })
+  const { email, password } = req.body;
+  User.find({ email })
     .then(users => {
-      bcrypt.compare(pass, users[0].password, (err, same) => {
-        if (same === true) {
-          return res.status(200).json({
-            message: 'success',
-            token: Helpers.createToken(users[0])
-          });
-        }
-        return res.status(401).json({ message: 'email or password mismatch!' });
-      });
+      bcrypt
+        .compare(password, users[0].password)
+        .then(() => res
+          .status(OK)
+          .header('x-auth-token', Helpers.createToken(users[0]))
+          .json({ message: 'Login successfull' }))
+        .catch(err => Helpers.respondWithError(res, { ...err, status: UNAUTHORIZED }));
     })
-    .catch(err => res.status(401).json({ message: err.message }));
+    .catch(err => Helpers.respondWithError(res, { ...err, status: UNAUTHORIZED }));
 };
 
 // /************************ EXPORT ALL USERS AUTH HANDLERS ******************/

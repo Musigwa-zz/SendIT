@@ -15,33 +15,20 @@ export default class Database {
   // UTIL METHOD FOR CUATOMIZING THE ERROR //
 
   createError(err) {
-    const { detail: message, name, ...rest } = err;
-    return { message, name: 'ValidationError', ...rest };
-  }
-
-  // CREATE THE CLIENT CONNECTION AND EXPOSE A QUERY //
-
-  query(queryStream, values = []) {
-    const pool = new Pool({ connectionString });
-    return new Promise(async (resolve, reject) => {
-      pool.connect().then(client => client
-        .query(queryStream, values)
-        .then(res => {
-          client.release();
-          resolve(res.rows[0]);
-        })
-        .catch(err => {
-          client.release();
-          reject(this.createError(err));
-        }));
-      await pool.end();
-    });
+    const { detail: message, ...rest } = err;
+    const error = new Error(message);
+    return {
+      error,
+      message,
+      name: 'QueryError',
+      ...rest
+    };
   }
 
   // UTIL METHOD FOR VALIDATING THE DATA WITH THE SCHEMA //
 
-  validate(data) {
-    return Joi.validate(data, this.schema);
+  validate(data, schema = this.schema) {
+    return Joi.validate(data, schema);
   }
 
   // UTIL METHOD FOR CREATING THE {KEY, VALUE} PAIR //
@@ -78,6 +65,28 @@ export default class Database {
     return { keys, nspace, values };
   }
 
+  // CREATE THE CLIENT CONNECTION AND EXPOSE A QUERY //
+
+  query(queryStream, values = []) {
+    const pool = new Pool({ connectionString });
+    return new Promise(async (resolve, reject) => {
+      pool.connect().then(client => client
+        .query(queryStream, values)
+        .then(res => {
+          client.release();
+          return res.rows.length
+            ? resolve(res.rows)
+            : reject(this.createError({ detail: 'No matching items found' }));
+        })
+        .catch(err => {
+          debug(err);
+          client.release();
+          return reject(this.createError(err));
+        }));
+      await pool.end();
+    });
+  }
+
   // PUSH THE NEW OBJECT INTO THE DATABSE'S DEFINED TABLE //
 
   save(data) {
@@ -101,9 +110,7 @@ export default class Database {
   findById(id) {
     return new Promise((resolve, reject) => {
       this.find({ id })
-        .then(res => (res.length
-          ? resolve(res[0])
-          : reject({ message: 'No matching item found', name: 'QueryError' })))
+        .then(rows => resolve(rows[0]))
         .catch(err => reject(this.createError(err)));
     });
   }
@@ -129,11 +136,8 @@ export default class Database {
   findByIdAndUpdate(id, args = {}) {
     return new Promise((resolve, reject) => {
       this.findById(id)
-        .then(() => {
-          this.update(args, { id })
-            .then(response => resolve(response))
-            .catch(err => reject(err));
-        })
+        .then(() => this.update(args, { id }))
+        .then(rows => resolve(rows[0]))
         .catch(err => reject(err));
     });
   }
@@ -157,12 +161,17 @@ export default class Database {
   // REMOVE SPECIFIC RECORD THAT MATCHES THE GIVEN ID //
 
   findByIdAndRemove(id) {
-    return this.remove({ id });
+    return new Promise((resolve, reject) => {
+      this.findById(id)
+        .then(() => this.remove({ id }))
+        .then(res => resolve(res))
+        .catch(err => reject(err));
+    });
   }
 
   // DELETE ALL RECORDS FROM THE TABLE //
 
   removeAll() {
-    return this.query(`TRUNCATE ${this.table} RESTART IDENTITY CASCADE`);
+    return this.query(`TRUNCATE ${this.table} RESTART IDENTITY CASCADE returning*`);
   }
 }
