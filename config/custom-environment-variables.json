@@ -1,0 +1,6 @@
+{
+  "PORT": "PORT",
+  "JWT_KEY": "SENDIT_JWT",
+  "DB_URL": "DATABASE_URL",
+  "DEBUGGER": "DEBUG"
+}

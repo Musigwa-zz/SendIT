@@ -3,7 +3,7 @@ import Database from '../database';
 
 // the schema definition of the parcel
 
-const schema = Joi.object().keys({
+const schema = {
   recipient_name: Joi.string()
     .trim()
     .optional(),
@@ -37,6 +37,6 @@ const schema = Joi.object().keys({
   price: Joi.number()
     .required()
     .min(1)
-});
+};
 
 export default new Database(schema, 'parcels');

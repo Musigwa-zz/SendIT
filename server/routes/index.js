@@ -20,8 +20,8 @@ const uploads = ('/uploads', express.static('uploads'));
 /** ********** ALL ENDPOINTS *************************** */
 
 // Unprotected routes
-all.use(entryPoint, auth);
+all.use(entryPoint, auth, uploads);
 // Protected routes
-all.use(Helpers.checkAuth, parcelsRoutes, usersRoutes, uploads);
+all.use(Helpers.checkAuth, parcelsRoutes, usersRoutes);
 
 export default all;

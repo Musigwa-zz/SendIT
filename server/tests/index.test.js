@@ -10,6 +10,8 @@ chai.use(chaiHTTP);
 // Tests the entrypoint of the server
 
 describe('/GET server', () => {
+  beforeEach(() => {});
+  afterEach(() => server.close());
   it("it should return an object with property message:'welcome'", done => {
     const exp = { msg: 'welcome' };
     chai
