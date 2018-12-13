@@ -16,7 +16,7 @@ env:
 services:
   - postgresql
 before_install:
-  - psql -c 'create database send_it_test' -U postgres
+  - psql -c 'create database senditest' -U postgres
 before_script:
   - yarn global add nyc
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
