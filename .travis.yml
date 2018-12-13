@@ -10,9 +10,6 @@ services:
   - postgresql
 before_install:
   - psql -c 'create database send_it_test' -U postgres
-env:
-  global:
-    - CC_TEST_REPORTER_ID=d74a6ddbb7eeac99d4f0cce96edae32c13004e30d6e777c47fb58fac57e7ff1d
 before_script:
     - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
