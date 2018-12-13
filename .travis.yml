@@ -8,6 +8,9 @@ cache:
 addons:
   postgresql: '9.6'
   chrome: stable
+env:
+  global:
+    - CC_TEST_REPORTER_ID=8c0f851a536641c7567c1280e9e771372b071afb1319a9ab4149a8de6ff26e6b
 services:
   - postgresql
 before_install:
