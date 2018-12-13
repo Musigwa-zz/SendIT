@@ -17,9 +17,6 @@ if (app.get('env') === 'development') app.use(morgan('dev'));
 
 middleware(app);
 const server = app.listen(config.get('PORT'), () => {
-  // debug(`node-env: ${process.env.NODE_ENV}`);
-  // debug(`sendit_jwt: ${config.get('JWT_KEY')}`);
-  // debug(`debug: ${config.get('DEBUGGER')}`);
   debug(`server listening on port: ${config.get('PORT')}`);
 });
 

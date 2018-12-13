@@ -10,52 +10,97 @@
       href="../../assets/icons/favicon.ico"
       type="image/x-icon"
     />
+    <script src="../../js/signup.js"></script>
     <title>SignUp</title>
   </head>
 
   <body>
     <section class="modal" id="new-order">
       <p class="modal-header">create an account to join us</p>
-      <div class="modal-body">
+      <form
+        class="modal-body"
+        method="POST"
+        action="localhost:5070/api/v1/auth/signup"
+      >
         <div class="input-group">
           <div class="input-group-addon">
             <img src="../../assets/icons/person.png" alt="" />
           </div>
-          <input class="modal-form-control" placeholder="Full name" />
+          <input
+            class="modal-form-control"
+            placeholder="Full name"
+            name="full_name"
+            required
+            id="full_name"
+            type="text"
+          />
         </div>
         <div class="input-group">
           <div class="input-group-addon">
             <img src="../../assets/icons/email.png" alt="" />
           </div>
-          <input class="modal-form-control" placeholder="Email" />
+          <input
+            class="modal-form-control"
+            placeholder="Email"
+            name="email"
+            id="email"
+            required
+            type="email"
+          />
         </div>
         <div class="input-group">
           <div class="input-group-addon">
             <img src="../../assets/icons/call.png" alt="" />
           </div>
-          <input class="modal-form-control" placeholder="Phone number" />
+          <input
+            class="modal-form-control"
+            placeholder="Phone number"
+            name="phone"
+            id="phone"
+            required
+            type="tel"
+          />
         </div>
         <div class="input-group">
           <div class="input-group-addon">
             <img src="../../assets/icons/lock.png" alt="" />
           </div>
-          <input class="modal-form-control" placeholder="Password" />
+          <input
+            class="modal-form-control"
+            placeholder="Password"
+            name="password"
+            id="password"
+            required
+            type="password"
+          />
         </div>
         <div class="input-group">
           <div class="input-group-addon">
             <img src="../../assets/icons/lock.png" alt="" />
           </div>
-          <input class="modal-form-control" placeholder="Confirm password" />
+          <input
+            class="modal-form-control"
+            placeholder="Confirm password"
+            name="c-password"
+            id="c-password"
+            required
+            type="c-password"
+          />
         </div>
         <div class="submit-wrap">
-          <a class="submit-btn" href="../client/index.html">
+          <button
+            class="submit-btn"
+            type="submit"
+            value="submit"
+            onclick="createAccount()"
+          >
             <img class="fab-icon" src="../../assets/icons/confirm.png " alt="logo" />
             <p>submit</p>
-          </a>
+          </button>
           <span>Already a member?</span>
           <a class="local" href="login.html"> Login </a>
         </div>
-      </div>
+      </form>
     </section>
   </body>
 </html>
