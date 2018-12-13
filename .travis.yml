@@ -1,23 +1,27 @@
 language: node_js
 node_js:
   - 'stable'
+dist: trusty
 cache:
   directories:
     - 'node_modules'
 addons:
   postgresql: '9.6'
+  chrome: stable
 services:
   - postgresql
 before_install:
   - psql -c 'create database send_it_test' -U postgres
 before_script:
-    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - yarn global add nyc
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 script:
   - npm run migrate
+  - nyc --reporter=lcov yarn run unit
   - npm test
 after_success:
   - npm run coveralls
