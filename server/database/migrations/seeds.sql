@@ -1,23 +1,22 @@
 -- create the user parcels
 CREATE TABLE
 IF NOT EXISTS users
-(
-    id SERIAL PRIMARY KEY,
-    full_name VARCHAR
+(id SERIAL PRIMARY KEY,
+full_name VARCHAR
 (30) NOT NULL,
-    phone VARCHAR
+phone VARCHAR
 (15) NOT NULL UNIQUE,
-    email VARCHAR
+email VARCHAR
 (50) NOT NULL UNIQUE,
-    password VARCHAR
+password VARCHAR
 (200) NOT NULL,
-    role VARCHAR
-(10) NOT NULL,
-    avatar VARCHAR
+role VARCHAR
+(6) NOT NULL,
+avatar VARCHAR
 (80) DEFAULT NULL,
-    createdat timestamp NOT NULL DEFAULT now
+createdat timestamp NOT NULL DEFAULT now
 (),
-    updatedat timestamp NOT NULL DEFAULT now
+updatedat timestamp NOT NULL DEFAULT now
 ());
 
 -- create the parcels table

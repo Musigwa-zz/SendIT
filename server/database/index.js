@@ -5,7 +5,6 @@ import dbDebugger from 'debug';
 
 const debug = dbDebugger('sendit:db');
 const connectionString = config.get('DB_URL');
-debug(`DB_URL: ${connectionString}`);
 export default class Database {
   constructor(schema, tableName) {
     this.table = tableName;
@@ -14,15 +13,12 @@ export default class Database {
 
   // UTIL METHOD FOR CUATOMIZING THE ERROR //
 
-  createError(err) {
+  rejectWithError(reject, err) {
     const { detail: message, ...rest } = err;
     const error = new Error(message);
-    return {
-      error,
-      message,
-      name: 'QueryError',
-      ...rest
-    };
+    error.name = 'QueryError';
+    debug(error);
+    return reject({ error, message, ...rest });
   }
 
   // UTIL METHOD FOR VALIDATING THE DATA WITH THE SCHEMA //
@@ -69,21 +65,24 @@ export default class Database {
 
   query(queryStream, values = []) {
     const pool = new Pool({ connectionString });
-    return new Promise(async (resolve, reject) => {
-      pool.connect().then(client => client
-        .query(queryStream, values)
-        .then(res => {
-          client.release();
-          return res.rows.length
-            ? resolve(res.rows)
-            : reject(this.createError({ detail: 'No matching items found' }));
+    return new Promise((resolve, reject) => {
+      pool
+        .connect()
+        .then(client => {
+          debug(`Connected to database: ${connectionString}`);
+          return client
+            .query(queryStream, values)
+            .then(res => {
+              client.release();
+              return resolve(res.rows);
+            })
+            .catch(err => {
+              client.release();
+              return this.rejectWithError(reject, err);
+            });
         })
-        .catch(err => {
-          debug(err);
-          client.release();
-          return reject(this.createError(err));
-        }));
-      await pool.end();
+        .catch(err => this.rejectWithError(reject, err));
+      pool.end().then(() => debug(`Disonnected from database: ${connectionString}`));
     });
   }
 
@@ -102,7 +101,13 @@ export default class Database {
   find(args = {}) {
     const { keys, values } = this.createKeyValue(args);
     const condition = Object.keys(args).length ? ` WHERE ${keys}` : '';
-    return this.query(`SELECT * FROM ${this.table}${condition}`, values);
+    return new Promise((resolve, reject) => {
+      this.query(`SELECT * FROM ${this.table}${condition}`, values)
+        .then(rows => (rows.length
+          ? resolve(rows)
+          : this.rejectWithError(reject, { detail: 'No matching items found' })))
+        .catch(err => this.rejectWithError(reject, err));
+    });
   }
 
   // SEARCH FOR SPECIFIC RECORD THAT MATCHES THE GIVEN ID //
@@ -111,7 +116,7 @@ export default class Database {
     return new Promise((resolve, reject) => {
       this.find({ id })
         .then(rows => resolve(rows[0]))
-        .catch(err => reject(this.createError(err)));
+        .catch(err => this.rejectWithError(reject, err));
     });
   }
 
@@ -138,7 +143,7 @@ export default class Database {
       this.findById(id)
         .then(() => this.update(args, { id }))
         .then(rows => resolve(rows[0]))
-        .catch(err => reject(err));
+        .catch(err => this.rejectWithError(reject, err));
     });
   }
 
@@ -165,7 +170,7 @@ export default class Database {
       this.findById(id)
         .then(() => this.remove({ id }))
         .then(res => resolve(res))
-        .catch(err => reject(err));
+        .catch(err => this.rejectWithError(reject, err));
     });
   }
 

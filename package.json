@@ -6,12 +6,12 @@
   "author": "MUSIGWA Pacifique",
   "license": "MIT",
   "scripts": {
-    "server": "clear && NODE_ENV=development DEBUG=sendit:* nodemon --exec babel-node ./server/index.js",
-    "migrate": "clear && DEBUG=sendit:mig node --require babel-register ./server/database/migrations/prepare --exit",
+    "server": "clear && NODE_ENV=development yarn migrate && DEBUG=sendit:* nodemon --exec babel-node ./server/index.js",
+    "migrate": "clear && DEBUG=sendit:migrate node --require babel-register ./server/database/migrations --exit",
     "prodgrate": "cat server/database/migrations/seeds.sql | heroku pg:psql -a sendit-api",
     "build": "babel server -d server/dist",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "test": "clear && NODE_ENV=test DEBUG= nyc --reporter=text --reporter=lcov mocha --timeout 25000 --require babel-register {server/tests,server/tests/**}/*.test.js --exit || true"
+    "test": "clear && NODE_ENV=test yarn migrate && nyc --reporter=text --reporter=lcov mocha --timeout 25000 --require babel-register {server/tests,server/tests/**}/*.test.js --exit || true"
   },
   "engines": {
     "node": "10.13.0"
@@ -29,7 +29,6 @@
     "config": "^3.0.0",
     "cross-env": "5.2.0",
     "debug": "^4.1.0",
-    "dotenv": "^6.1.0",
     "express": "4.16.4",
     "joi": "^14.0.4",
     "jsonwebtoken": "8.3.0",
@@ -48,6 +47,7 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "mocha": "^5.2.0",
+    "mocha-lcov-reporter": "^1.3.0",
     "nyc": "^13.1.0",
     "prettier": "^1.14.3",
     "prettier-eslint": "^8.8.2",
