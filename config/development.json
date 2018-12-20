@@ -1,4 +1,4 @@
 {
   "DB_URL": "postgresql://musigwa:pro@247DB@localhost:5432/sendit",
-  "JWT_KEY": "SET_YOUR_KEY"
+  "JWT_KEY": "SET_YOUR_DEV_KEY"
 }
