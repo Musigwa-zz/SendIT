@@ -8,3 +8,5 @@ TODO.md
 PR.md
 .env
 # server/database/migrations/createAdmin.js
+config/test.json
+server/database/migrations/seeds.sql
