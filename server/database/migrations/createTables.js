@@ -5,7 +5,7 @@ const tables = [
       phone VARCHAR(15) NOT NULL UNIQUE,
       email VARCHAR(50) NOT NULL UNIQUE,
       password VARCHAR(200) NOT NULL,
-      role VARCHAR(6) NOT NULL,
+      isAdmin boolean NOT NULL DEFAULT false,
       avatar VARCHAR(80) DEFAULT NULL,
       createdat timestamp NOT NULL DEFAULT now(),
       updatedat timestamp NOT NULL DEFAULT now()

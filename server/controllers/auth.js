@@ -35,17 +35,18 @@ const createUser = (req, res) => {
 // /***************** THE USER ACCOUNT LOGIN ********************************/
 
 const login = (req, res) => {
-  const { email, password } = req.body;
+  const { email, password = '' } = req.body;
   User.find({ email })
-    .then(users => {
-      bcrypt
-        .compare(password, users[0].password)
-        .then(() => res
-          .status(OK)
-          .header('x-auth-token', Helpers.createToken(users[0]))
-          .json({ message: 'Login successfull' }))
-        .catch(err => Helpers.respondWithError(res, { ...err, status: UNAUTHORIZED }));
-    })
+    .then(users => bcrypt.compare(password, users[0].password, (err, same) => (same
+      ? res
+        .status(OK)
+        .header('x-auth-token', Helpers.createToken(users[0]))
+        .json({ message: 'Login successfull' })
+      : Helpers.respondWithError(res, {
+        ...err,
+        status: UNAUTHORIZED,
+        message: 'Error login'
+      }))))
     .catch(err => Helpers.respondWithError(res, { ...err, status: UNAUTHORIZED }));
 };
 

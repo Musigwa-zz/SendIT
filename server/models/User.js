@@ -13,10 +13,9 @@ const schema = {
     .regex(/^\+?[1-9]\d{1,14}$/)
     .required()
     .min(10),
-  role: Joi.string()
-    .trim()
-    .only('client')
-    .default('client'),
+  isAdmin: Joi.boolean()
+    .only(false)
+    .default(false),
   email: Joi.string()
     .trim()
     .email({ minDomainAtoms: 2 })

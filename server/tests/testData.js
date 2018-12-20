@@ -1,20 +1,33 @@
 const newParcel = {
-  origin: 'kibuye',
-  destination: 'kigali',
-  recipient: {
-    name: 'muhirwa',
-    phone: '0785782029'
-  },
-  weight: 30,
-  sender: '0'
+  origin: 'kigali',
+  destination: 'kigembe',
+  recipient_phone: '+250783676567',
+  recipient_name: 'zachee ndikumana',
+  present_location: 'kigali',
+  weight: 3.6,
+  price: 10.3
 };
 
-const newUser = {
-  full_name: 'ATETE Gloria',
-  phone: '+250785548963',
-  email: 'gloria@gmail.com',
-  password: 'pro247SENDIT'
-};
+const newUser = [
+  {
+    full_name: 'Gloria ATETE',
+    phone: '+250725464556',
+    email: 'gloria@gmail.com',
+    password: 'secret742SENDIT'
+  },
+  {
+    full_name: 'KAGABO Eric',
+    phone: '+250783198552',
+    email: 'kagabo@gmail.com',
+    password: 'secret742SENDIT'
+  },
+  {
+    full_name: 'TUYISENGE Claude',
+    phone: '+250753128552',
+    email: 'tuyisenge@hotmail.com',
+    password: 'secret742SENDIT'
+  }
+];
 
 const baseUrl = '/api/v1';
 

@@ -9,17 +9,26 @@ const {
 // /***************** CREATE THE PARCEL ***************************************/
 
 const createParcel = (req, res) => {
-  const { role, id: sender } = req.user;
-  if (role === 'client') {
-    Parcel.save({ ...req.body, sender })
-      .then(parcel => res.status(CREATED).json({ message: 'Order created successfully', parcel }))
-      .catch(err => Helpers.respondWithError(res, { status: 400, ...err }));
-  } else {
-    return Helpers.respondWithError({
-      status: FORBIDDEN,
-      message: 'Only client can create orders'
-    });
-  }
+  const { isadmin, id: sender } = req.user;
+  Parcel.validate({ ...req.body, sender })
+    .then(results => {
+      if (!isadmin) {
+        Parcel.save(results)
+          .then(parcel => res
+            .status(CREATED)
+            .json({ message: 'Order created successfully', parcel }))
+          .catch(err => Helpers.respondWithError(res, { status: BAD_REQUEST, ...err }));
+      } else {
+        return Helpers.respondWithError({
+          status: FORBIDDEN,
+          message: 'Only client can create orders'
+        });
+      }
+    })
+    .catch(error => Helpers.respondWithError(res, {
+      ...error.details[0],
+      status: BAD_REQUEST
+    }));
 };
 
 // /**GET ALL PARCELS [filter them with search queries/getAll if no queries]****/
@@ -40,8 +49,11 @@ const getAll = (req, res) => {
 const getParcel = (req, res) => {
   const { id } = req.params;
   const { id: sender } = req.user;
-  Parcel.findById({ id, sender })
-    .then(parcel => res.status(OK).json({ message: 'Successful', parcel }))
+  Parcel.find({ id, sender })
+    .then(parcels => {
+      const [parcel] = parcels;
+      return res.status(OK).json({ message: 'Successful', parcel });
+    })
     .catch(err => Helpers.respondWithError(res, {
       err,
       status: NOT_FOUND,
@@ -53,23 +65,37 @@ const getParcel = (req, res) => {
 
 const updateParcel = (req, res) => {
   const { id } = req.params;
-  const { role } = req.user;
-  const { status } = req.body;
-  if ((role === 'client' && status === 'cancelled') || role === 'admin') {
+  const { isadmin, id: sender } = req.user;
+  if (
+    (!isadmin && (req.url.includes('cancel') || req.url.includes('destination')))
+    || isadmin
+  ) {
     if (Object.keys(req.body).length) {
-      Parcel.findById(id)
-        .then(record => {
-          const { status: st } = record;
+      Parcel.find(isadmin ? { id } : { id, sender })
+        .then(records => {
+          const { status: st } = records[0];
           if (st.toLowerCase() === 'delivered' || st.toLowerCase() === 'cancelled') {
             return Helpers.respondWithError(res, {
               status: FORBIDDEN,
               message: "Can't update the delivered or cancelled order"
             });
           }
-          return Parcel.update(req.body, { id });
+          return Parcel.update(req.body, { id })
+            .then(parcels => {
+              const [parcel] = parcels;
+              return res.status(CREATED).json({ message: 'Successful', parcel });
+            })
+            .catch(err => Helpers.respondWithError(res, {
+              ...err,
+              status: NOT_FOUND,
+              message: 'Something went wrong'
+            }));
         })
-        .then(parcel => res.status(CREATED).json({ message: 'Successful', parcel }))
-        .catch(err => Helpers.respondWithError(res, { ...err, status: BAD_REQUEST }));
+        .catch(err => Helpers.respondWithError(res, {
+          ...err,
+          status: NOT_FOUND,
+          message: 'No such parcel found'
+        }));
     } else {
       return Helpers.respondWithError(res, {
         status: BAD_REQUEST,
@@ -78,7 +104,7 @@ const updateParcel = (req, res) => {
     }
   } else {
     return Helpers.respondWithError(res, {
-      status: BAD_REQUEST,
+      status: FORBIDDEN,
       message: "Can't perform this task unless you're admin"
     });
   }

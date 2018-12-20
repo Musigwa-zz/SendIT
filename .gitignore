@@ -7,4 +7,4 @@ coverage
 TODO.md
 PR.md
 .env
-server/database/migrations/createAdmin.js
+# server/database/migrations/createAdmin.js

@@ -1,17 +1,21 @@
-import jwt from 'jsonwebtoken';
-import config from 'config';
+import Helpers from '../helpers';
+import constants from '../helpers/constants';
 
+const { INTERNAL_SERVER_ERROR, UNAUTHORIZED } = constants.statusCode;
 export default async (req, res, next) => {
   const { authorization } = req.headers;
   try {
     const [bearer, token] = authorization.split(' ');
-    bearer === 'Bearer'
-      ? await (req.user = jwt.verify(token, config.get('JWT_KEY')))
-      : null;
+    if (bearer !== 'Bearer') {
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .json({ message: 'Provide the correct authentication information' });
+    }
+    req.user = Helpers.decodeToken(token);
     next();
   } catch (error) {
     return res
-      .status(401)
+      .status(UNAUTHORIZED)
       .json({ message: 'Provide the correct authentication information' });
   }
 };
