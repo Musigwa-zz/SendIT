@@ -8,12 +8,12 @@
   "scripts": {
     "testenv": "NODE_ENV=test",
     "devenv": "NODE_ENV=development",
-    "server": "clear && yarn devenv yarn migrate && DEBUG=sendit:* yarn devenv nodemon --exec babel-node ./server/index.js",
+    "server": "clear && npm run devenv npm run migrate && DEBUG=sendit:* npm run devenv nodemon --exec babel-node ./server/index.js",
     "migrate": "DEBUG=sendit:migrate node --require babel-register ./server/database/migrations",
     "prodgrate": "cat server/database/migrations/seeds.sql | heroku pg:psql -a sendit-api",
     "build": "babel server -d server/dist",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "test": "clear && yarn testenv yarn migrate && yarn testenv nyc --reporter=text --reporter=lcov mocha --timeout 25000 --require babel-register {server/tests,server/tests/**}/*.test.js --exit || true"
+    "test": "clear && npm run testenv npm run migrate && npm run testenv nyc --reporter=text --reporter=lcov mocha --timeout 25000 --require babel-register {server/tests,server/tests/**}/*.test.js --exit || true"
   },
   "engines": {
     "node": "10.13.0"
