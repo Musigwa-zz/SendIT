@@ -15,7 +15,11 @@ const createUser = (req, res) => {
   const { filename } = file;
   const { password, ...rest } = req.body;
   let avatar;
-  if (filename) avatar = `${hostname}:${config.get('PORT')}${baseUrl}/${filename}`;
+  if (filename) {
+    avatar = `${hostname}`;
+    avatar += process.env.NODE_ENV === 'development' ? `:${config.get('PORT')}` : '';
+    avatar += `${baseUrl}/${filename}`;
+  }
   User.validate({ ...rest, avatar, password })
     .then(results => {
       bcrypt.hash(results.password, 10, (err, hashed) => {
