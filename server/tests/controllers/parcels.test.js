@@ -1,431 +1,518 @@
-// import chai from 'chai';
-// import chaiHTTP from 'chai-http';
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import server from '../../index';
+import { baseUrl, newParcel, newUser } from '../testData';
+import constants from '../../helpers/constants';
+import User from '../../models/User';
+import Parcel from '../../models/Parcel';
+import Helpers from '../../helpers';
+import { admins } from '../../database/migrations/createAdmin';
 
-// import server from '../../index';
-// import Parcel from '../../models/Parcel';
-// import { newParcel, baseUrl } from '../testData';
+const {
+  CREATED,
+  UNAUTHORIZED,
+  BAD_REQUEST,
+  OK,
+  NOT_FOUND,
+  FORBIDDEN
+} = constants.statusCode;
+const { expect } = chai;
+let clientToken;
+chai.use(chaiHttp);
 
-// const should = chai.should();
-// chai.use(chaiHTTP);
+before(done => {
+  Parcel.removeAll()
+    .then(() => User.remove(undefined, { isAdmin: false }))
+    .then(() => User.validate(newUser[1]))
+    .then(valid => User.save(valid))
+    .then(user => {
+      clientToken = Helpers.createToken(user);
+      return done();
+    })
+    .catch(err => done(err));
+});
+after(done => {
+  Parcel.removeAll()
+    .then(() => User.removeAll())
+    .then(() => done())
+    .catch(err => done(err));
+});
 
-// // Tests for the [parcels] api endpoints //
+describe('All endpoints concerning the parcel delivery orders', () => {
+  const url = `${baseUrl}/parcels`;
+  describe('/POST create a new parcel delivery order', () => {
+    it('should return an error if provided an invalid token, STATUS [UNAUTHORIZED]', done => {
+      // console.log('USER TOKEN:', token);
+      chai
+        .request(server)
+        .post(url)
+        .set('Authorization', `Bearer ${clientToken}sh`)
+        .send(newParcel)
+        .then(res => {
+          expect(res).to.have.status(UNAUTHORIZED);
+          expect(res.body).to.be.an('object');
+          expect(res.body)
+            .to.haveOwnProperty('message')
+            .to.includes('Provide the correct authentication information');
+          return done();
+        })
+        .catch(err => done(err));
+    });
 
-// describe('Test all API methods related with parcels', () => {
-// beforeEach(() => {});
-// afterEach(() => server.close());
-//   // clear data before and after any testing
+    it('should return the created parcel order, STATUS [201]', done => {
+      chai
+        .request(server)
+        .post(url)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .send(newParcel)
+        .then(res => {
+          expect(res).to.have.status(CREATED);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('parcel');
+          expect(res.body.parcel).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('message');
+          expect(res.body.message).to.be.a('string');
+          expect(res.body.message).to.contain('created');
+          expect(res.body.parcel).to.haveOwnProperty('id');
+          return done();
+        })
+        .catch(err => done(err));
+    });
 
-//   beforeEach(async () => await Parcel.remove());
-//   afterEach(async () => await Parcel.remove());
+    it('should return an error if no recipient_phone provided, STATUS [BAD_REQUEST]', done => {
+      const { recipient_phone, ...rest } = newParcel;
+      chai
+        .request(server)
+        .post(url)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .send(rest)
+        .then(res => {
+          expect(res).to.have.status(BAD_REQUEST);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('message');
+          expect(res.body.message).to.contain('phone is required');
+          return done();
+        })
+        .catch(err => done(err));
+    });
 
-//   // POST parcels [returns all created parcel delivery orders
+    it("should return an error if the recipeint_phone doesn't match the following pattern:(unique, 10 min, 14 max) digits and/or starts with (+) symbol, STATUS [BAD_REQUEST]", done => {
+      const data = { ...newParcel, recipient_phone: 78965 };
+      chai
+        .request(server)
+        .post(url)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .send(data)
+        .then(res => {
+          expect(res).to.have.status(BAD_REQUEST);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('message');
+          expect(res.body.message).to.contain(
+            '(unique, 10 min, 14 max) digits and/or starts with (+) symbol'
+          );
+          return done();
+        })
+        .catch(err => done(err));
+    });
 
-//   describe('/POST create a new parcel delivery order', () => {
-//     it('it should return an object with error=null property, STATUS [201]', done => {
-//       chai
-//         .request(server)
-//         .post(`${baseUrl}/parcels`)
-//         .send(newParcel)
-//         .end((err, res) => {
-//           res.should.have.status(201);
-//           res.body.should.be.a('object');
-//           res.body.should.have.property('error', null, 'expected error to be null');
-//           res.body.should.have
-//             .property('parcels')
-//             .be.a('array')
-//             .length(1);
-//         });
-//       done();
-//     });
-//     it('the sender of the order is required, it should return an object with error property, STATUS [400]', done => {
-//       const { sender, ...rest } = newParcel;
-//       chai
-//         .request(server)
-//         .post(`${baseUrl}/parcels`)
-//         .send(rest)
-//         .end((err, res) => {
-//           res.should.have.status(400);
-//           res.body.should.be.a('object');
-//           res.body.should.have.property('error');
-//           res.body.error.should.have.property('name', 'ValidationError');
-//           res.body.error.should.have.property('message', '"sender" is required');
-//         });
-//       done();
-//     });
-//     it('the sender of the order is a string of atleast 1 char, it should return an object with error property STATUS [400]', done => {
-//       const data = { ...newParcel, sender: '' };
-//       chai
-//         .request(server)
-//         .post(`${baseUrl}/parcels`)
-//         .send(data)
-//         .end((err, res) => {
-//           res.should.have.status(400);
-//           res.body.should.be.a('object');
-//           res.body.should.have.property('error');
-//           res.body.error.should.have.property('name', 'ValidationError');
-//           res.body.error.should.have.property(
-//             'message',
-//             '"sender" is not allowed to be empty',
-//             'expected error message include [not allowed to be empty]'
-//           );
-//         });
-//       done();
-//     });
-//     it('the recipient of the order is required, it should return an object with error property STATUS [400]', done => {
-//       const { recipient, ...rest } = newParcel;
-//       chai
-//         .request(server)
-//         .post(`${baseUrl}/parcels`)
-//         .send(rest)
-//         .end((err, res) => {
-//           res.should.have.status(400);
-//           res.body.should.be.a('object');
-//           res.body.should.have.property('error');
-//           res.body.error.should.have.property('name', 'ValidationError');
-//           res.body.error.should.have.property('message', '"recipient" is required');
-//         });
-//       done();
-//     });
-//     it('the recipient must be an object of atleast phone property, it should return an object with error property STATUS [400]', done => {
-//       const data = { ...newParcel, recipient: {} };
-//       chai
-//         .request(server)
-//         .post(`${baseUrl}/parcels`)
-//         .send(data)
-//         .end((err, res) => {
-//           res.should.have.status(400);
-//           res.body.should.be.a('object');
-//           res.body.should.have
-//             .property('error')
-//             .be.a('object', 'expected error to be an object');
-//           res.body.error.should.have.property('name', 'ValidationError');
-//           res.body.error.should.have.property('message', '"phone" is required');
-//         });
-//       done();
-//     });
-//     it("the recipient's phone number must be an object of atleast 10 chars, it should return an object with error property STATUS [400]", done => {
-//       const data = { ...newParcel, recipient: { phone: '0789' } };
-//       chai
-//         .request(server)
-//         .post(`${baseUrl}/parcels`)
-//         .send(data)
-//         .end((err, res) => {
-//           res.should.have.status(400);
-//           res.body.should.be.a('object');
-//           res.body.should.have
-//             .property('error')
-//             .be.a('object', 'expected error to be an object');
-//           res.body.error.should.have.property('name', 'ValidationError');
-//           res.body.error.should.have.property(
-//             'message',
-//             '"phone" length must be at least 10 characters long'
-//           );
-//         });
-//       done();
-//     });
-//     it('the pick up location [origin] of the order must be provided, it should return an object with error property STATUS [400]', done => {
-//       const { origin, ...rest } = newParcel;
-//       chai
-//         .request(server)
-//         .post(`${baseUrl}/parcels`)
-//         .send(rest)
-//         .end((err, res) => {
-//           res.should.have.status(400);
-//           res.body.should.be.a('object');
-//           res.body.should.have
-//             .property('error')
-//             .be.a('object', 'expected error to be an object');
-//           res.body.error.should.have.property('name', 'ValidationError');
-//           res.body.error.should.have.property('message', '"origin" is required');
-//         });
-//       done();
-//     });
-//     it('the pick up location [origin] of the order must be a string of atleast one char, it should return an object with error property STATUS [400]', done => {
-//       const data = { ...newParcel, origin: '' };
+    it('should return an error if no pick up location [origin] provided, STATUS [BAD_REQUEST]', done => {
+      const { origin, ...rest } = newParcel;
+      chai
+        .request(server)
+        .post(url)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .send(rest)
+        .then(res => {
+          expect(res).to.have.status(BAD_REQUEST);
+          expect(res.body).to.be.an('object');
+          expect(res.body)
+            .to.haveOwnProperty('message')
+            .be.a('string')
+            .includes('"origin" is required');
+          return done();
+        })
+        .catch(err => done(err));
+    });
 
-//       chai
-//         .request(server)
-//         .post(`${baseUrl}/parcels`)
-//         .send(data)
-//         .end((err, res) => {
-//           res.should.have.status(400);
-//           res.body.should.be.a('object');
-//           res.body.should.have
-//             .property('error')
-//             .be.a('object', 'expected error to be an object');
-//           res.body.error.should.have.property('name', 'ValidationError');
-//           res.body.error.should.have.property(
-//             'message',
-//             '"origin" is not allowed to be empty'
-//           );
-//         });
-//       done();
-//     });
-//     it('the [destination] of the order must be provided, it should return an object with error property STATUS [400]', done => {
-//       const { destination, ...rest } = newParcel;
-//       chai
-//         .request(server)
-//         .post(`${baseUrl}/parcels`)
-//         .send(rest)
-//         .end((err, res) => {
-//           res.should.have.status(400);
-//           res.body.should.be.a('object');
-//           res.body.should.have
-//             .property('error')
-//             .be.a('object', 'expected error to be an object');
-//           res.body.error.should.have.property('name', 'ValidationError');
-//           res.body.error.should.have.property(
-//             'message',
-//             '"destination" is required'
-//           );
-//         });
-//       done();
-//     });
-//     it('the [destination] of the order must be a string of atleast one char, it should return an object with error property STATUS [400]', done => {
-//       const data = { ...newParcel, destination: '' };
+    it('should return an error if the pick up location [origin] is not a string of atleast one char, STATUS [BAD_REQUEST]', done => {
+      const data = { ...newParcel, origin: '' };
+      chai
+        .request(server)
+        .post(url)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .send(data)
+        .then(res => {
+          expect(res).to.have.status(BAD_REQUEST);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('message');
+          return done();
+        })
+        .catch(err => done(err));
+    });
 
-//       chai
-//         .request(server)
-//         .post(`${baseUrl}/parcels`)
-//         .send(data)
-//         .end((err, res) => {
-//           res.should.have.status(400);
-//           res.body.should.be.a('object');
-//           res.body.should.have
-//             .property('error')
-//             .be.a('object', 'expected error to be an object');
-//           res.body.error.should.have.property('name', 'ValidationError');
-//           res.body.error.should.have.property(
-//             'message',
-//             '"destination" is not allowed to be empty'
-//           );
-//         });
-//       done();
-//     });
-//     it('the [weight] of the parcel must be provided, it should return an object with error property STATUS [400]', done => {
-//       const { weight, ...rest } = newParcel;
-//       chai
-//         .request(server)
-//         .post(`${baseUrl}/parcels`)
-//         .send(rest)
-//         .end((err, res) => {
-//           res.should.have.status(400);
-//           res.body.should.be.a('object');
-//           res.body.should.have
-//             .property('error')
-//             .be.a('object', 'expected error to be an object');
-//           res.body.error.should.have.property('name', 'ValidationError');
-//           res.body.error.should.have.property('message', '"weight" is required');
-//         });
-//       done();
-//     });
-//     it('the [weight] of the parcel must be a nummber >= [one], it should return an object with error property STATUS [400]', done => {
-//       const data = { ...newParcel, weight: 0 };
+    it('should return an error if no [destination] provided or an invalid destination, STATUS [BAD_REQUEST]', done => {
+      const { destination, ...rest } = newParcel;
+      chai
+        .request(server)
+        .post(url)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .send(rest)
+        .then(res => {
+          expect(res).to.have.status(BAD_REQUEST);
+          expect(res.body).to.be.an('object');
+          expect(res.body)
+            .to.haveOwnProperty('message')
+            .contain('"destination" is required');
+          return done();
+        })
+        .catch(err => done(err));
+    });
+  });
 
-//       chai
-//         .request(server)
-//         .post(`${baseUrl}/parcels`)
-//         .send(data)
-//         .end((err, res) => {
-//           res.should.have.status(400);
-//           res.body.should.be.a('object');
-//           res.body.should.have
-//             .property('error')
-//             .be.a('object', 'expected error to be an object');
-//           res.body.error.should.have.property('name', 'ValidationError');
-//           res.body.error.should.have.property(
-//             'message',
-//             '"weight" must be larger than or equal to 1'
-//           );
-//         });
-//       done();
-//     });
-//     it('it should decline the order with properties not matching the order schema, it should return an object with error property STATUS [400]', done => {
-//       const data = { ...newParcel, limit: 0 };
-//       chai
-//         .request(server)
-//         .post(`${baseUrl}/parcels`)
-//         .send(data)
-//         .end((err, res) => {
-//           res.should.have.status(400);
-//           res.body.should.be.a('object');
-//           res.body.should.have
-//             .property('error')
-//             .be.a('object', 'expected error to be an object');
-//           res.body.error.should.have.property('name', 'ValidationError');
-//           res.body.error.should.have.property('message', '"limit" is not allowed');
-//         });
-//       done();
-//     });
-//   });
+  describe('/GET parcel delivery orders', () => {
+    it('should return an array of all created parcels, STATUS [OK]', done => {
+      chai
+        .request(server)
+        .get(url)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .then(res => {
+          expect(res).to.have.status(OK);
+          expect(res.body).to.be.an('object');
+          expect(res.body).to.haveOwnProperty('parcels');
+          expect(res.body.parcels).to.be.an('array');
+          expect(res.body)
+            .to.haveOwnProperty('message')
+            .contain('Successful');
+          return done();
+        })
+        .catch(err => done(err));
+    });
+  });
+  describe('/GET a specific parcel delivery order', () => {
+    it('should return parcel object property, STATUS [OK]', done => {
+      chai
+        .request(server)
+        .get(`${url}/1`)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .then(res => {
+          expect(res).to.have.status(OK);
+          expect(res.body)
+            .to.be.an('object')
+            .haveOwnProperty('message')
+            .includes('Successful');
+          expect(res.body)
+            .to.haveOwnProperty('parcel')
+            .to.be.an('object');
+          return done();
+        })
+        .catch(err => done(err));
+    });
+    it('should return an error if the given ID is not found, STATUS [NOT_FOUND]', done => {
+      chai
+        .request(server)
+        .get(`${url}/4`)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .then(res => {
+          expect(res).to.have.status(NOT_FOUND);
+          expect(res.body)
+            .to.be.an('object')
+            .haveOwnProperty('message')
+            .contain('No parcel order');
+          return done();
+        })
+        .catch(err => done(err));
+    });
+  });
 
-//   // GET parcels [returns all parcel deliv orders created by the users]
+  describe("/GET fetch the user's parcel delivery orders", () => {
+    it('should return an array of parcels, STATUS [OK]', done => {
+      const { id } = Helpers.decodeToken(clientToken);
+      chai
+        .request(server)
+        .get(`${baseUrl}/users/${id}/parcels`)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .then(res => {
+          expect(res).to.have.status(OK);
+          expect(res.body)
+            .to.be.an('object')
+            .haveOwnProperty('parcels')
+            .be.an('array');
+          expect(res.body)
+            .to.haveOwnProperty('message')
+            .be.an('string')
+            .includes('Successful');
+          return done();
+        })
+        .catch(err => done(err));
+    });
+    it("should return an error if the user doesn't exist, STATUS [NOT_FOUND]", done => {
+      chai
+        .request(server)
+        .get(`${baseUrl}/users/34R/parcels`)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .then(res => {
+          expect(res).to.have.status(NOT_FOUND);
+          expect(res.body)
+            .to.haveOwnProperty('message')
+            .be.an('string')
+            .includes('No parcel orders');
+          return done();
+        })
+        .catch(err => done(err));
+    });
+  });
 
-//   describe('/GET parcel delivery orders', () => {
-//     it('it should return an object with error=null, and array of parcels,STATUS [200]', done => {
-//       Parcel.save(newParcel) // must save the verified data to match the schema
-//         .then(() => {
-//           chai
-//             .request(server)
-//             .get(`${baseUrl}/parcels`)
-//             .end((err, res) => {
-//               res.should.have.status(200);
-//               res.body.should.be.a('object');
-//               res.body.should.have.property('parcels');
-//               res.body.should.have.property(
-//                 'error',
-//                 null,
-//                 'expected error to be null'
-//               );
-//               res.body.parcels.should.be
-//                 .a('array', 'expected parcels to be an array')
-//                 .length(1);
-//             });
-//           done();
-//         });
-//     });
-//     it('it should return an object with an empty array parcels, STATUS [204]', done => {
-//       chai
-//         .request(server)
-//         .get(`${baseUrl}/parcels`)
-//         .end((err, res) => {
-//           res.body.should.be.a('object');
-//           res.should.have.status(204);
-//         });
-//       done();
-//     });
-//   });
-//   // GET parcels/<parcelid> [returns a specific parcel deliv order by its ID]
+  describe('/PUT cancel the parcel delivery order', () => {
+    it('should return the canceled order, STATUS [CREATED]', done => {
+      chai
+        .request(server)
+        .put(`${url}/1/cancel`)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .then(res => {
+          expect(res).to.have.status(CREATED);
+          expect(res.body)
+            .to.be.an('object')
+            .haveOwnProperty('parcel')
+            .to.be.an('object')
+            .haveOwnProperty('status')
+            .equals('cancelled');
+          return done();
+        })
+        .catch(err => done(err));
+    });
+    it('should return an error if provided an invalid id, STATUS [BAD_REQUEST]', done => {
+      chai
+        .request(server)
+        .put(`${url}/1ddsKJBKdbj354/cancel`)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .then(res => {
+          expect(res).to.have.status(NOT_FOUND);
+          expect(res.body)
+            .to.be.an('object')
+            .haveOwnProperty('message')
+            .includes('No such parcel');
+          return done();
+        })
+        .catch(err => done(err));
+    });
+    it('should return an error if the target parcel is cancelled or delivered, STATUS [FORBIDDEN]', done => {
+      chai
+        .request(server)
+        .put(`${url}/1/cancel`)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .then(res => {
+          expect(res).to.have.status(FORBIDDEN);
+          expect(res.body)
+            .to.be.an('object')
+            .haveOwnProperty('message')
+            .be.a('string')
+            .includes("Can't update the delivered or cancelled order");
+          return done();
+        })
+        .catch(err => done(err));
+    });
+  });
 
-//   describe('/GET a specific parcel delivery order', () => {
-//     it('it should return an object with error=null and parcel property, STATUS [200]', done => {
-//       Parcel.save(newParcel) // must save the verified data to match the schema
-//         .then(() => {
-//           chai
-//             .request(server)
-//             .get(`${baseUrl}/parcels/${newParcel.sender}`)
-//             .end((err, res) => {
-//               res.should.have.status(200);
-//               res.body.should.be.a('object');
-//               res.body.should.have
-//                 .property('parcel')
-//                 .be.a('object', 'expected parcel to be an object');
-//               res.body.should.have.property(
-//                 'error',
-//                 null,
-//                 'expected error to be null'
-//               );
-//             });
-//           done();
-//         });
-//     });
-//     it('if the given ID is not found, it should return an object with error property,STATUS [400]', done => {
-//       chai
-//         .request(server)
-//         .get(`${baseUrl}/parcels/${newParcel.sender}`)
-//         .end((err, res) => {
-//           res.should.have.status(400);
-//           res.body.should.be.a('object');
-//           res.body.should.have.property('error');
-//           res.body.error.should.have.property('message');
-//         });
-//       done();
-//     });
-//   });
+  describe('/PUT change the destination of a parcel delivery order', () => {
+    let parcelId;
+    before(done => {
+      chai
+        .request(server)
+        .post(url)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .send(newParcel)
+        .then(res => {
+          parcelId = res.body.parcel.id;
+          return done();
+        })
+        .catch(err => done(err));
+    });
+    it('should return an updated parcel object, STATUS [CREATED]', done => {
+      chai
+        .request(server)
+        .put(`${url}/${parcelId}/destination`)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .send({ destination: 'Kabgayi' })
+        .then(res => {
+          expect(res).to.have.status(CREATED);
+          expect(res.body)
+            .to.be.an('object')
+            .haveOwnProperty('message')
+            .to.be.a('string')
+            .includes('Successful');
+          expect(res.body)
+            .to.haveOwnProperty('parcel')
+            .to.be.an('object')
+            .haveOwnProperty('destination')
+            .equals('Kabgayi');
+          return done();
+        })
+        .catch(err => done(err));
+    });
+    it('should return an error if no new destination provided, STATUS [BAD_REQUEST]', done => {
+      chai
+        .request(server)
+        .put(`${url}/${parcelId}/destination`)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .then(res => {
+          expect(res).to.have.status(BAD_REQUEST);
+          expect(res.body)
+            .to.be.an('object')
+            .haveOwnProperty('message')
+            .to.be.a('string')
+            .includes('Provide the new value(s)');
+          return done();
+        })
+        .catch(err => done(err));
+    });
+    it('should return a not found error if the parcelId is invalid, STATUS [NOT_FOUND]', done => {
+      chai
+        .request(server)
+        .put(`${url}/89/destination`)
+        .set('Authorization', `Bearer ${clientToken}`)
+        .send({ destination: 'Kabgayi' })
+        .then(res => {
+          expect(res).to.have.status(NOT_FOUND);
+          expect(res.body)
+            .to.be.an('object')
+            .haveOwnProperty('message')
+            .to.be.a('string')
+            .includes('No such parcel found');
+          return done();
+        })
+        .catch(err => done(err));
+    });
+  });
 
-//   /**
-//    * PUT parcels/<parcelId>/cancel [returns all parcel delivery orders with
-//    * cancelled status of the order matched by the given ID]
-//    */
+  describe('Administrator activities for parcels orders', () => {
+    const { email, password } = admins[0];
+    let adminToken;
+    before(done => {
+      chai
+        .request(server)
+        .post(`${baseUrl}/auth/login`)
+        .send({ email, password })
+        .then(res => {
+          adminToken = res.header['x-auth-token'];
+          return done();
+        })
+        .catch(err => done(err));
+    });
+    describe('/PUT change the status of a parcel delivery order', () => {
+      it('should return an updated parcel object, STATUS [CREATED]', done => {
+        // console.log('ADMIN TOKEN:', adminToken);
+        chai
+          .request(server)
+          .put(`${url}/2/status`)
+          .set('Authorization', `Bearer ${adminToken}`)
+          .send({ status: 'transit' })
+          .then(res => {
+            expect(res).to.have.status(CREATED);
+            expect(res.body)
+              .to.haveOwnProperty('message')
+              .be.an('string')
+              .includes('Successful');
+            expect(res.body)
+              .to.be.an('object')
+              .haveOwnProperty('parcel')
+              .be.an('object')
+              .haveOwnProperty('status')
+              .equals('transit');
+            return done();
+          })
+          .catch(err => done(err));
+      });
+      it('should return an error if no new status provided, STATUS [BAD_REQUEST]', done => {
+        chai
+          .request(server)
+          .put(`${url}/2/status`)
+          .set('Authorization', `Bearer ${adminToken}`)
+          .then(res => {
+            expect(res).to.have.status(BAD_REQUEST);
+            expect(res.body)
+              .to.be.an('object')
+              .haveOwnProperty('message')
+              .to.be.a('string')
+              .includes('Provide the new value(s)');
+            return done();
+          })
+          .catch(err => done(err));
+      });
+      it('should return an error if the user access level is not administrator, STATUS [FORBIDDEN]', done => {
+        chai
+          .request(server)
+          .put(`${url}/2/status`)
+          .set('Authorization', `Bearer ${clientToken}`)
+          .send({ status: 'transit' })
+          .then(res => {
+            expect(res).to.have.status(FORBIDDEN);
+            expect(res.body)
+              .to.be.an('object')
+              .haveOwnProperty('message')
+              .to.be.a('string')
+              .includes("Can't perform this task");
+            return done();
+          })
+          .catch(err => done(err));
+      });
+    });
 
-//   describe('/PUT cancel the parcel delivery order', () => {
-//     it('it should return an object with error=null property STATUS [200]', done => {
-//       Parcel.save(newParcel) // must save the verified data to match the schema
-//         .then(() => {
-//           chai
-//             .request(server)
-//             .put(`${baseUrl}/parcels/${newParcel.sender}/cancel`)
-//             .end((err, res) => {
-//               res.should.have.status(200);
-//               res.body.should.be.a('object');
-//               res.body.should.have.property(
-//                 'error',
-//                 null,
-//                 'expected error to be null'
-//               );
-//               res.body.should.have.property('parcels').be.a('array');
-//               // .should.have.property(
-//               //   'status',
-//               //   'cancelled',
-//               //   'expected parcel status to be [cancelled]',
-//               // );
-//             });
-//           done();
-//         });
-//     });
-//     it('if the id is not found, it should return an object with error property STATUS [400]', done => {
-//       Parcel.save(newParcel) // must save the verified data to match the schema
-//         .then(() => {
-//           chai
-//             .request(server)
-//             .put(`${baseUrl}/parcels/1ddsKJBKdbj354/cancel`)
-//             .end((err, res) => {
-//               res.should.have.status(400);
-//               res.body.should.be.a('object');
-//               res.body.should.have
-//                 .property('error')
-//                 .be.a('object', 'expected error to be an object');
-//               res.body.error.should.have.property('message');
-//             });
-//           done();
-//         });
-//     });
-//     it("[delivered] orders can't be cancelled. it should return an object with error, STATUS [403]", done => {
-//       Parcel.save({ ...newParcel, status: 'delivered' }).then(() => {
-//         chai
-//           .request(server)
-//           .put(`${baseUrl}/parcels/${newParcel.sender}/cancel`)
-//           .end((err, res) => {
-//             res.should.have.status(403);
-//             res.body.should.be.a('object');
-//             res.body.should.have.property('error');
-//             res.body.error.should.have.property(
-//               'message',
-//               "can't cancel delivered order",
-//               "expected error message to be [can't cancel delivered order]"
-//             );
-//             res.body.error.should.have.property(
-//               'name',
-//               'permissionError',
-//               'expected error name to be permissionError'
-//             );
-//           });
-//         done();
-//       });
-//     });
-//   });
-
-//   // GET users/<userId>/parcels [returns all parcel delivery orders with the matched given userId]
-
-//   describe("/GET all the parcel user's delivery orders", () => {
-//     it('it should return an object with error=null property STATUS [200]', done => {
-//       Parcel.save(newParcel) // must save the verified data to match the schema
-//         .then(() => {
-//           chai
-//             .request(server)
-//             .get(`${baseUrl}/users/${newParcel.sender}/parcels`)
-//             .end((err, res) => {
-//               res.should.have.status(200);
-//               res.body.should.be.a('object');
-//               res.body.should.have.property(
-//                 'error',
-//                 null,
-//                 'expected error to be null'
-//               );
-//               res.body.should.have.property('parcels').be.a('array');
-//             });
-//           done();
-//         });
-//     });
-//   });
-// });
+    describe('/PUT change the presentLocation of a parcel delivery order', () => {
+      it('should return an updated parcel object, STATUS [CREATED]', done => {
+        chai
+          .request(server)
+          .put(`${url}/2/presentLocation`)
+          .set('Authorization', `Bearer ${adminToken}`)
+          .send({ present_location: 'Kimisagara' })
+          .then(res => {
+            expect(res).to.have.status(CREATED);
+            expect(res.body)
+              .to.haveOwnProperty('message')
+              .be.an('string')
+              .includes('Successful');
+            expect(res.body)
+              .to.be.an('object')
+              .haveOwnProperty('parcel')
+              .be.an('object')
+              .haveOwnProperty('present_location')
+              .equals('Kimisagara');
+            return done();
+          })
+          .catch(err => done(err));
+      });
+      it('should return an error if no presentLocation provided, STATUS [BAD_REQUEST]', done => {
+        chai
+          .request(server)
+          .put(`${url}/2/presentLocation`)
+          .set('Authorization', `Bearer ${adminToken}`)
+          .then(res => {
+            expect(res).to.have.status(BAD_REQUEST);
+            expect(res.body)
+              .to.be.an('object')
+              .haveOwnProperty('message')
+              .to.be.a('string')
+              .includes('Provide the new value(s)');
+            return done();
+          })
+          .catch(err => done(err));
+      });
+      it('should return an error if the user access level is not administrator, STATUS [FORBIDDEN]', done => {
+        chai
+          .request(server)
+          .put(`${url}/2/presentLocation`)
+          .set('Authorization', `Bearer ${clientToken}`)
+          .send({ status: 'transit' })
+          .then(res => {
+            expect(res).to.have.status(FORBIDDEN);
+            expect(res.body)
+              .to.be.an('object')
+              .haveOwnProperty('message')
+              .to.be.a('string')
+              .includes("Can't perform this task");
+            return done();
+          })
+          .catch(err => done(err));
+      });
+    });
+  });
+});

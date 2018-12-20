@@ -15,15 +15,15 @@ const getUserInfo = (req, res) => {
       if (Date.parse(user.updatedat) === Date.parse(user.createdat)) omitKeys.push('updatedat');
       return res
         .status(OK)
-        .json({ message: 'Successful', user: _.omit(user, omitKeys) });
+        .json({ message: 'Successful', me: _.omit(user, omitKeys) });
     })
     .catch(err => Helpers.respondWithError(res, {
       ...err,
       status: NOT_FOUND,
-      message: 'Your info not found, consider logging in'
+      message: 'current user info not found, consider logging in'
     }));
 };
 
 // /************************ EXPORT ALL USERS AUTH HANDLERS ******************/
 
-export { getUserInfo };
+export default getUserInfo;

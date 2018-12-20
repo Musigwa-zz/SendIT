@@ -18,7 +18,7 @@ export default class Database {
     const error = new Error(message);
     error.name = 'QueryError';
     debug(error);
-    return reject({ error, message, ...rest });
+    return reject({ ...error, message, ...rest });
   }
 
   // UTIL METHOD FOR VALIDATING THE DATA WITH THE SCHEMA //
@@ -90,10 +90,12 @@ export default class Database {
 
   save(data) {
     const { values, keys, nspace } = this.NamespaceKeyValue(data);
-    return this.query(
+    return new Promise((resolve, reject) => this.query(
       `INSERT INTO ${this.table}(${keys}) values(${nspace}) returning*`,
       values
-    );
+    )
+      .then(rows => resolve(rows[0]))
+      .catch(err => reject(err)));
   }
 
   // SEARCH FOR RECORDS THAT MATCH THE GIVEN SEARCH QUERIES //
@@ -168,8 +170,8 @@ export default class Database {
   findByIdAndRemove(id) {
     return new Promise((resolve, reject) => {
       this.findById(id)
-        .then(() => this.remove({ id }))
-        .then(res => resolve(res))
+        .then(() => this.remove(undefined, { id }))
+        .then(res => resolve(res[0]))
         .catch(err => this.rejectWithError(reject, err));
     });
   }
@@ -177,6 +179,6 @@ export default class Database {
   // DELETE ALL RECORDS FROM THE TABLE //
 
   removeAll() {
-    return this.query(`TRUNCATE ${this.table} RESTART IDENTITY CASCADE returning*`);
+    return this.query(`TRUNCATE ${this.table} RESTART IDENTITY CASCADE`);
   }
 }
