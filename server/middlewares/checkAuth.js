@@ -2,7 +2,7 @@ import Helpers from '../helpers';
 import constants from '../helpers/constants';
 
 const { INTERNAL_SERVER_ERROR, UNAUTHORIZED } = constants.statusCode;
-export default async (req, res, next) => {
+export default (req, res, next) => {
   const { authorization } = req.headers;
   try {
     const [bearer, token] = authorization.split(' ');

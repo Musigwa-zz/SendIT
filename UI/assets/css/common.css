@@ -56,7 +56,7 @@ td,
 button {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
-  font-family: "Gotham-Light";
+  font-family: 'Gotham-Light';
   font-weight: inherit;
   margin: 0%;
   padding: 0%;
@@ -65,7 +65,7 @@ button {
 a {
   text-decoration: none;
   color: var(--main-white);
-  font-family: "Gotham-Medium";
+  font-family: 'Gotham-Medium';
 }
 
 /* Constant definitions */
@@ -91,6 +91,11 @@ a {
   /* --top-overview-height: 100vw; */
 }
 
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 /* Top navbar styles */
 
 .top-nav {
@@ -365,7 +370,39 @@ a {
   margin: 1em 0.5em;
   border-radius: 0.5em;
 }
+.toast {
+  position: absolute;
+  background-color: darkorange;
+  font-family: Cormorant Garamond;
+  font-weight: 600;
+  font-size: 24px;
+  font-style: italic;
+  text-align: center;
+  color: #ffffff;
+  padding: 16px;
+  top: 0%;
+  right: 15%;
+  left: 33%;
+  opacity: 0.5;
+  animation: fadeInOut 2s;
+  border-radius: 4px;
+  text-align: center;
+  z-index: 1;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  visibility: hidden;
+}
 
+.show {
+  visibility: visible;
+}
+
+@keyframes fadeInOut {
+  5%,
+  95% {
+    opacity: 1;
+    top: 30%;
+  }
+}
 .lg-card .lg-card-content {
   padding: 0.5em;
 }
@@ -525,5 +562,10 @@ a {
   .content {
     margin-left: 0px;
     padding: 0px;
+  }
+  .toast {
+    right: 10%;
+    left: 10%;
+    font-size: 18px;
   }
 }

@@ -25,27 +25,8 @@
   </head>
 
   <body>
-    <!--
-      ################################## TOP NAVBAR SECTION #####################################
-    -->
+    <script src="../../js/client/index.js"></script>
     <section class="top-nav">
-      <div class="top-nav-left">
-        <a href="settings.html" class="svg" onclick="">
-          <img src="../../assets/icons/settings.png" alt="logo" />
-        </a>
-        <a href="delivered.html" class="svg" onclick="">
-          <img src="../../assets/icons/delivered.png" alt="logo" />
-        </a>
-        <a href="in-transit.html" class="svg" onclick="">
-          <img class="mini" src="../../assets/icons/transit.png" alt="logo" />
-        </a>
-        <a href="uncofirmed.html" class="svg" onclick="">
-          <img src="../../assets/icons/await.png" alt="logo" />
-        </a>
-        <a href="index.html" class="svg" onclick="">
-          <img src="../../assets/icons/dashboard.png" alt="logo" />
-        </a>
-      </div>
       <div class="top-nav-right">
         <div class="notif-container">
           <a href="#" class="svg" onclick="">
@@ -70,13 +51,7 @@
         </div>
       </div>
     </section>
-    <!--
-      ###########################################################################################
-    -->
 
-    <!--
-      ################################## LEFT SIDE NAV MENUS #####################################
-    -->
     <section class="side-nav">
       <a href="index.html">
         <div class="side-option highlighted">
@@ -88,30 +63,10 @@
           <h1>overview</h1>
         </div>
       </a>
-      <a href="uncofirmed.html">
+      <a href="profile.html">
         <div class="side-option">
           <img class="navbar-icon" src="../../assets/icons/await.png" alt="logo" />
-          <h1>unconfirmed</h1>
-        </div>
-      </a>
-      <a href="in-transit.html">
-        <div class="side-option">
-          <img
-            class="navbar-icon"
-            src="../../assets/icons/transit.png "
-            alt="logo"
-          />
-          <h1>in transit</h1>
-        </div>
-      </a>
-      <a href="delivered.html">
-        <div class="side-option">
-          <img
-            class="navbar-icon"
-            src="../../assets/icons/delivered.png"
-            alt="logo"
-          />
-          <h1>delivered</h1>
+          <h1>profile</h1>
         </div>
       </a>
       <a href="settings">
@@ -124,15 +79,15 @@
           <h1>settings</h1>
         </div>
       </a>
+      <a href="../../index.html">
+        <div class="side-option">
+          <img class="navbar-icon" src="../../assets/icons/await.png" alt="logo" />
+          <h1>logout</h1>
+        </div>
+      </a>
     </section>
-    <!--
-      ###########################################################################################
-    -->
 
-    <!--
-      ################################## CENTER CONTENTS SECTION ################################
-    -->
-    <section class="content">
+    <section id="content" class="content">
       <!-- Monthly overview top component -->
       <div class="overview">
         <div>
@@ -144,7 +99,7 @@
             />
             <p>unconfirmed</p>
           </div>
-          <div class="data">45</div>
+          <div class="data">0</div>
         </div>
         <div>
           <div class="head-line">
@@ -155,7 +110,7 @@
             />
             <p>transit</p>
           </div>
-          <div class="data">80</div>
+          <div class="data">0</div>
         </div>
         <div>
           <div class="head-line">
@@ -166,336 +121,14 @@
             />
             <p>delivered</p>
           </div>
-          <div class="data">12</div>
+          <div class="data">0</div>
         </div>
       </div>
       <!-- End of the overview component -->
-
-      <div class="lg-card">
-        <div class="lg-card-content">
-          <div class="data-table">
-            <table>
-              <tr>
-                <th>order id</th>
-                <th>recipient names</th>
-                <th>recipient phone</th>
-                <th>pickup location</th>
-                <th>current address</th>
-                <th>destination</th>
-                <th></th>
-                <th>status</th>
-                <th>timestamp</th>
-                <th></th>
-              </tr>
-              <tr>
-                <td>1516239022</td>
-                <td>Alfreds Futterkiste</td>
-                <td>+250785782928</td>
-                <td>Gasabo</td>
-                <td>KK 19 Av</td>
-                <td>KG 632 St, 10Av</td>
-                <td>
-                  <img
-                    onclick="openModal('edit-dest')"
-                    class="hover"
-                    src="../../assets/icons/edit.png"
-                    alt="lg"
-                    title="Change destination"
-                  />
-                </td>
-                <td>delivered</td>
-                <td>Wed, 31 Oct 2018</td>
-                <td>
-                  <img
-                    class="hover"
-                    src="../../assets/icons/x-button.png"
-                    alt="lg"
-                    title="Cancel order"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>1516239022</td>
-                <td>Alfreds Futterkiste</td>
-                <td>+250785782928</td>
-                <td>Gasabo</td>
-                <td>KK 19 Av</td>
-                <td>KG 632 St, 10Av</td>
-                <td>
-                  <img
-                    onclick="openModal('edit-dest')"
-                    class="hover"
-                    src="../../assets/icons/edit.png"
-                    alt="lg"
-                    title="Change destination"
-                  />
-                </td>
-                <td>delivered</td>
-                <td>Wed, 31 Oct 2018</td>
-                <td>
-                  <img
-                    class="hover"
-                    src="../../assets/icons/x-button.png"
-                    alt="lg"
-                    title="Cancel order"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>1516239022</td>
-                <td>Alfreds Futterkiste</td>
-                <td>+250785782928</td>
-                <td>Gasabo</td>
-                <td>KK 19 Av</td>
-                <td>KG 632 St, 10Av</td>
-                <td>
-                  <img
-                    onclick="openModal('edit-dest')"
-                    class="hover"
-                    src="../../assets/icons/edit.png"
-                    alt="lg"
-                    title="Change destination"
-                  />
-                </td>
-                <td>delivered</td>
-                <td>Wed, 31 Oct 2018</td>
-                <td>
-                  <img
-                    class="hover"
-                    src="../../assets/icons/x-button.png"
-                    alt="lg"
-                    title="Cancel order"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>1516239022</td>
-                <td>Alfreds Futterkiste</td>
-                <td>+250785782928</td>
-                <td>Gasabo</td>
-                <td>KK 19 Av</td>
-                <td>KG 632 St, 10Av</td>
-                <td>
-                  <img
-                    onclick="openModal('edit-dest')"
-                    class="hover"
-                    src="../../assets/icons/edit.png"
-                    alt="lg"
-                    title="Change destination"
-                  />
-                </td>
-                <td>delivered</td>
-                <td>Wed, 31 Oct 2018</td>
-                <td>
-                  <img
-                    class="hover"
-                    src="../../assets/icons/x-button.png"
-                    alt="lg"
-                    title="Cancel order"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>1516239022</td>
-                <td>Alfreds Futterkiste</td>
-                <td>+250785782928</td>
-                <td>Gasabo</td>
-                <td>KK 19 Av</td>
-                <td>KG 632 St, 10Av</td>
-                <td>
-                  <img
-                    onclick="openModal('edit-dest')"
-                    class="hover"
-                    src="../../assets/icons/edit.png"
-                    alt="lg"
-                    title="Change destination"
-                  />
-                </td>
-                <td>delivered</td>
-                <td>Wed, 31 Oct 2018</td>
-                <td>
-                  <img
-                    class="hover"
-                    src="../../assets/icons/x-button.png"
-                    alt="lg"
-                    title="Cancel order"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>1516239022</td>
-                <td>Alfreds Futterkiste</td>
-                <td>+250785782928</td>
-                <td>Gasabo</td>
-                <td>KK 19 Av</td>
-                <td>KG 632 St, 10Av</td>
-                <td>
-                  <img
-                    onclick="openModal('edit-dest')"
-                    class="hover"
-                    src="../../assets/icons/edit.png"
-                    alt="lg"
-                    title="Change destination"
-                  />
-                </td>
-                <td>delivered</td>
-                <td>Wed, 31 Oct 2018</td>
-                <td>
-                  <img
-                    class="hover"
-                    src="../../assets/icons/x-button.png"
-                    alt="lg"
-                    title="Cancel order"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>1516239022</td>
-                <td>Alfreds Futterkiste</td>
-                <td>+250785782928</td>
-                <td>Gasabo</td>
-                <td>KK 19 Av</td>
-                <td>KG 632 St, 10Av</td>
-                <td>
-                  <img
-                    onclick="openModal('edit-dest')"
-                    class="hover"
-                    src="../../assets/icons/edit.png"
-                    alt="lg"
-                    title="Change destination"
-                  />
-                </td>
-                <td>delivered</td>
-                <td>Wed, 31 Oct 2018</td>
-                <td>
-                  <img
-                    class="hover"
-                    src="../../assets/icons/x-button.png"
-                    alt="lg"
-                    title="Cancel order"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>1516239022</td>
-                <td>Alfreds Futterkiste</td>
-                <td>+250785782928</td>
-                <td>Gasabo</td>
-                <td>KK 19 Av</td>
-                <td>KG 632 St, 10Av</td>
-                <td>
-                  <img
-                    onclick="openModal('edit-dest')"
-                    class="hover"
-                    src="../../assets/icons/edit.png"
-                    alt="lg"
-                    title="Change destination"
-                  />
-                </td>
-                <td>delivered</td>
-                <td>Wed, 31 Oct 2018</td>
-                <td>
-                  <img
-                    class="hover"
-                    src="../../assets/icons/x-button.png"
-                    alt="lg"
-                    title="Cancel order"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>1516239022</td>
-                <td>Alfreds Futterkiste</td>
-                <td>+250785782928</td>
-                <td>Gasabo</td>
-                <td>KK 19 Av</td>
-                <td>KG 632 St, 10Av</td>
-                <td>
-                  <img
-                    onclick="openModal('edit-dest')"
-                    class="hover"
-                    src="../../assets/icons/edit.png"
-                    alt="lg"
-                    title="Change destination"
-                  />
-                </td>
-                <td>delivered</td>
-                <td>Wed, 31 Oct 2018</td>
-                <td>
-                  <img
-                    class="hover"
-                    src="../../assets/icons/x-button.png"
-                    alt="lg"
-                    title="Cancel order"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>1516239022</td>
-                <td>Alfreds Futterkiste</td>
-                <td>+250785782928</td>
-                <td>Gasabo</td>
-                <td>KK 19 Av</td>
-                <td>KG 632 St, 10Av</td>
-                <td>
-                  <img
-                    onclick="openModal('edit-dest')"
-                    class="hover"
-                    src="../../assets/icons/edit.png"
-                    alt="lg"
-                    title="Change destination"
-                  />
-                </td>
-                <td>delivered</td>
-                <td>Wed, 31 Oct 2018</td>
-                <td>
-                  <img
-                    class="hover"
-                    src="../../assets/icons/x-button.png"
-                    alt="lg"
-                    title="Cancel order"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>1516239022</td>
-                <td>Alfreds Futterkiste</td>
-                <td>+250785782928</td>
-                <td>Gasabo</td>
-                <td>KK 19 Av</td>
-                <td>KG 632 St, 10Av</td>
-                <td>
-                  <img
-                    onclick="openModal('edit-dest')"
-                    class="hover"
-                    src="../../assets/icons/edit.png"
-                    alt="lg"
-                    title="Change destination"
-                  />
-                </td>
-                <td>delivered</td>
-                <td>Wed, 31 Oct 2018</td>
-                <td>
-                  <img
-                    class="hover"
-                    src="../../assets/icons/x-button.png"
-                    alt="lg"
-                    title="Cancel order"
-                  />
-                </td>
-              </tr>
-            </table>
-          </div>
-        </div>
-      </div>
+      <div id="toast-div" class="toast"></div>
+      <div id="table-container" class="lg-card"></div>
     </section>
-    <!--
-      ###########################################################################################
-    -->
 
-    <!--
-      ################################# CHANGING DESTINATION MODAL ##############################
-    -->
     <section class="modal change-dest" id="edit-dest">
       <div class="modal-header">
         Add the new destination
@@ -519,13 +152,7 @@
         </a>
       </div>
     </section>
-    <!--
-      ###########################################################################################
-    -->
 
-    <!--
-      ################################## NEW ORDER  SECTION #####################################
-    -->
     <section class="modal add-new" id="new-order">
       <div class="modal-header">
         Create a new parcel delivery order
@@ -589,19 +216,10 @@
         </a>
       </div>
     </section>
-    <!--
-      ###########################################################################################
-    -->
 
-    <!--
-      ###########################FLOATING ACTION BUTTON#########################################
-    -->
     <a class="fab" href="#" onclick="openModal('new-order')">
       <img class="fab-icon" src="../../assets/icons/plus.png" alt="logo" />
       <p>new order</p>
     </a>
-    <!--
-      ###########################################################################################
-    -->
   </body>
 </html>
