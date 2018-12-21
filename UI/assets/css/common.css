@@ -380,11 +380,9 @@ a {
   text-align: center;
   color: #ffffff;
   padding: 16px;
-  top: 0%;
+  top: 30%;
   right: 15%;
   left: 33%;
-  opacity: 0.5;
-  animation: fadeInOut 2s;
   border-radius: 4px;
   text-align: center;
   z-index: 1;
@@ -395,10 +393,13 @@ a {
 .show {
   visibility: visible;
 }
-
+.fade {
+  top: 0%;
+  opacity: 0;
+}
 @keyframes fadeInOut {
-  5%,
-  95% {
+  30%,
+  70% {
     opacity: 1;
     top: 30%;
   }

@@ -7,15 +7,11 @@ export default (req, res, next) => {
   try {
     const [bearer, token] = authorization.split(' ');
     if (bearer !== 'Bearer') {
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .json({ message: 'Provide the correct authentication information' });
+      return res.status(INTERNAL_SERVER_ERROR).json({ message: 'Access denied' });
     }
     req.user = Helpers.decodeToken(token);
     next();
   } catch (error) {
-    return res
-      .status(UNAUTHORIZED)
-      .json({ message: 'Provide the correct authentication information' });
+    return res.status(UNAUTHORIZED).json({ message: 'Access denied' });
   }
 };

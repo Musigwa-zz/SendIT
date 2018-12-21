@@ -1,15 +1,18 @@
 const baseUrl = 'http://127.0.0.1:5070/api/v1/parcels';
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imdsb3JpYUBnbWFpbC5jb20iLCJpZCI6MTcsImlzYWRtaW4iOmZhbHNlLCJpYXQiOjE1NDUzOTkxMjAsImV4cCI6MTU0NTQwMjcyMH0.ZTcNLnV3FKr7Rkp2NL4Q1TevP0gLFPoflVOioWdRb1k';
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imdsb3JpYUBnbWFpbC5jb20iLCJpZCI6MTcsImlzYWRtaW4iOmZhbHNlLCJpYXQiOjE1NDU0MDk1NzcsImV4cCI6MTU0NTQxMzE3N30.C4QX0OAjZPexsktGceFHtEFOKYiIGiz-fVPSNnckhEo';
 let toShow;
 
-const toggleToast = (message, timeout = 2000) => {
+const toggleToast = (message, expiresIn = 6000) => {
   document.getElementById('toast-div').classList.add('show');
   document.getElementById('toast-div').innerHTML = message;
-  setTimeout(
-    () => document.getElementById('toast-div').classList.remove('show'),
-    timeout
-  );
-  // return `<div id="toast" class="toast">${message}. Use the bottom-right button to create one.</div>`;
+  if (expiresIn !== false) {
+    document.getElementById('toast-div').style.animation = 'fadeInOut 6s';
+    document.getElementById('toast-div').classList.add('fade');
+    setTimeout(
+      () => document.getElementById('toast-div').classList.remove('show'),
+      expiresIn
+    );
+  }
 };
 
 fetch(baseUrl, {
@@ -91,12 +94,13 @@ fetch(baseUrl, {
         document.getElementsByClassName('data').item(index).innerHTML = value;
       });
       document.getElementById('table-container').innerHTML = toShow;
-    } else if (res.status === 401) {
-      window.location = '../../pages/auth/login.html';
-    } else if (res.status === 404) {
-      toggleToast(`${message}. Use the bottom-right button to create one.`);
-    } else if (res.status === 500) {
-      toShow = '<div id="toast" class="toast">Something went wrong! try again or contact the administrator.</div>';
+    } else if (res.status === 401) window.location = '../../pages/auth/login.html';
+    else if (res.status === 404) toggleToast(`${message}. Use the bottom-right button to create one.`);
+    else if (res.status === 500) {
+      toggleToast(
+        'Something went wrong! try again or contact the administrator.',
+        false
+      );
     }
   })
-  .catch(err => console.log(err));
+  .catch(() => toggleToast('Something went wrong. Contact the administrator.', false));
