@@ -372,13 +372,12 @@ a {
 }
 .toast {
   position: absolute;
-  background-color: darkorange;
   font-family: Cormorant Garamond;
   font-weight: 600;
   font-size: 24px;
   font-style: italic;
   text-align: center;
-  color: #ffffff;
+  color: #fff;
   padding: 16px;
   top: 30%;
   right: 15%;
@@ -427,6 +426,7 @@ a {
 .data-table th,
 .data-table td {
   text-align: center;
+  text-transform: capitalize;
   padding: 8px;
 }
 
@@ -474,8 +474,7 @@ a {
   position: fixed;
   right: 10px;
   bottom: 10px;
-  animation-name: fab;
-  animation-duration: 4s;
+  animation: fab 4s;
   animation-iteration-count: infinite;
 }
 
@@ -537,25 +536,6 @@ a {
   body {
     overflow-x: hidden;
   }
-  /* [class*="col-"] {
-    width: 100%;
-  }
-  .top-nav {
-    background: var(--primary);
-    background: linear-gradient(
-      90deg,
-      var(--primary-dark) 49%,
-      var(--primary) 100%,
-      var(--secondary) 100%
-    );
-  } */
-
-  .top-nav {
-    justify-content: space-between;
-  }
-  .top-nav-left {
-    display: flex;
-  }
   .side-nav {
     display: none;
   }
@@ -568,5 +548,8 @@ a {
     right: 10%;
     left: 10%;
     font-size: 18px;
+  }
+  .overview .head-line img {
+    display: none;
   }
 }
