@@ -3,9 +3,9 @@ const cancelOrder = element => {
 };
 
 const openModal = id => {
-  document.getElementById(id).style.display = "flex";
+  document.getElementById(id).style.display = 'flex';
 };
 
 const closeModal = id => {
-  document.getElementById(id).style.display = "none";
+  document.getElementById(id).style.display = 'none';
 };

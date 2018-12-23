@@ -16,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 if (app.get('env') === 'development') app.use(morgan('dev'));
 
 middleware(app);
+
 const server = app.listen(config.get('PORT'), () => {
   debug(`server listening on port: ${config.get('PORT')}`);
 });

@@ -60,7 +60,7 @@ describe('/GET fetch the current user details', () => {
         expect(res.body)
           .haveOwnProperty('message')
           .be.an('string')
-          .includes('Provide the correct');
+          .includes('Access denied');
         return done();
       })
       .catch(err => done(err));
@@ -74,7 +74,7 @@ describe('/GET fetch the current user details', () => {
         expect(res).to.have.status(INTERNAL_SERVER_ERROR);
         expect(res.body).to.be.an('object');
         expect(res.body).to.haveOwnProperty('message');
-        expect(res.body.message).to.contain('Provide the correct authentication');
+        expect(res.body.message).to.contain('Access denied');
         return done();
       })
       .catch(err => done(err));

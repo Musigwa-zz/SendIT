@@ -53,7 +53,7 @@ describe('All endpoints concerning the parcel delivery orders', () => {
           expect(res.body).to.be.an('object');
           expect(res.body)
             .to.haveOwnProperty('message')
-            .to.includes('Provide the correct authentication information');
+            .to.includes('Access denied');
           return done();
         })
         .catch(err => done(err));
