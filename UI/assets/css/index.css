@@ -50,16 +50,6 @@ header nav ul li a {
   display: table;
 }
 
-.nf-banner {
-  width: 40%;
-  height: calc(100vh - 100px);
-  background-image: url('../assets/images/cat.jpg');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  display: table;
-}
-
 .vertical-center {
   display: table-cell;
   vertical-align: middle;

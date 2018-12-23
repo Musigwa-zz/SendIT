@@ -106,7 +106,7 @@ export default class Database {
     return new Promise((resolve, reject) => {
       this.query(`SELECT * FROM ${this.table}${condition}`, values)
         .then(rows => (rows.length
-          ? resolve(rows)
+          ? resolve(rows.sort((a, b) => a.updatedat < b.updatedat))
           : this.rejectWithError(reject, { detail: 'No matching items found' })))
         .catch(err => this.rejectWithError(reject, err));
     });

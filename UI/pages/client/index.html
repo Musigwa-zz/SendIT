@@ -94,7 +94,7 @@
           <div class="head-line">
             <img
               class="deliver"
-              src="../../assets/icons/await-mini.png "
+              src="../../assets/icons/await-mini.png"
               alt="logo"
             />
             <p>unconfirmed</p>
@@ -105,10 +105,21 @@
           <div class="head-line">
             <img
               class="transit"
-              src="../../assets/icons/transit-mini.png "
+              src="../../assets/icons/transit-mini.png"
               alt="logo"
             />
             <p>transit</p>
+          </div>
+          <div class="data">0</div>
+        </div>
+        <div>
+          <div class="head-line">
+            <img
+              class="transit"
+              src="../../assets/icons/transit-mini.png"
+              alt="logo"
+            />
+            <p>cancelled</p>
           </div>
           <div class="data">0</div>
         </div>
@@ -176,39 +187,40 @@
           </div>
           <input class="modal-form-control" placeholder="Destination" />
         </div>
+
         <div class="input-group">
           <div class="input-group-addon">
-            <img src="../../assets/icons/number-blocks.png" alt="" />
+            <img src="../../assets/icons/food-scale-tool.png" alt="" />
           </div>
-          <input class="modal-form-control" placeholder="Quantity" />
+          <input class="modal-form-control" placeholder="Weight in Kilograms" />
         </div>
+
         <div class="input-group">
           <div class="input-group-addon">
             <img src="../../assets/icons/balance.png" alt="" />
           </div>
-          <input class="modal-form-control" placeholder="Weight" />
-        </div>
-        <div class="input-group">
-          <div class="input-group-addon">
-            <img src="../../assets/icons/calendar.png" alt="" />
-          </div>
           <input
-            type="date"
+            disabled
+            style="background-color:aqua;"
             class="modal-form-control"
-            placeholder="Delivery date"
+            value="Must pay: 0.00 Rwf"
           />
         </div>
+        <p class="input-separator">Beneficiary information</p>
         <div class="input-group">
           <div class="input-group-addon">
             <img src="../../assets/icons/person.png" alt="" />
           </div>
-          <input class="modal-form-control" placeholder="Beneficiary name" />
+          <input class="modal-form-control" placeholder="Full name  ex: musigwa" />
         </div>
         <div class="input-group">
           <div class="input-group-addon">
             <img src="../../assets/icons/call.png" alt="" />
           </div>
-          <input class="modal-form-control" placeholder="Beneficiary telephone" />
+          <input
+            class="modal-form-control"
+            placeholder="Telephone ex: +250784567556"
+          />
         </div>
         <a class="modal-submit" href="#">
           <img class="fab-icon" src="../../assets/icons/confirm.png" alt="logo" />
