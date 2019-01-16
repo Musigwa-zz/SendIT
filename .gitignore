@@ -4,7 +4,7 @@ yarn.*
 yarn-error.*
 coverage
 .nyc_output
-TODO.md
+AWARE.md
 PR.md
 .env
 # server/database/migrations/createAdmin.js

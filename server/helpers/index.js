@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
 import config from 'config';
 import ctrlDebugger from 'debug';
+import constants from './constants';
 
+const { UNAUTHORIZED, INTERNAL_SERVER_ERROR } = constants.statusCode;
 const debug = ctrlDebugger('sendit:controller');
-
 export default class Helpers {
   static createToken(user, options = { expiresIn: '1h' }) {
     const { email, id, isadmin } = user;
@@ -12,13 +13,15 @@ export default class Helpers {
 
   static respondWithError(
     res,
-    error = { status: 500, message: 'Something went wrong!..' }
+    error = { status: INTERNAL_SERVER_ERROR, message: 'Something went wrong!..' }
   ) {
-    if (error.message.includes('phone')) error.message = 'The phone is required to be(unique, 10 min, 14 max) digits and/or starts with (+) symbol.';
-    if (error.message.includes('password')) error.message = 'The password should be 7 characters minimum with at least one[uppercase,lowercase,number]';
-    if (error.status === 401) error.message = 'email or password mismatch!';
+    let { message = 'Something went wrong!..' } = error;
+    const { status = INTERNAL_SERVER_ERROR } = error;
+    if (message.includes('phone')) message = 'The phone number should be(unique, 9 min, 14 max). Country code is optional.';
+    if (message.includes('password')) message = 'The password should be 7 chars min with at least one(uppercase,lowercase,number,symbol)';
+    if (status === UNAUTHORIZED) message = 'email or password mismatch!';
     debug(error);
-    return res.status(error.status).json({ message: error.message });
+    return res.status(status).json({ message });
   }
 
   static decodeToken(token) {

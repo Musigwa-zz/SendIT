@@ -69,7 +69,7 @@ describe('Authentication/Authorization [signup, login]', () => {
         .field('full_name', 'KALISA Clement')
         .field('phone', '+251230864356')
         .field('email', 'clement@gmail.com')
-        .field('password', 'secret742SENDIT')
+        .field('password', 'secret!742SENDIT')
         .attach('avatar', fs.readFileSync('avatar.jpg'))
         .then(res => {
           expect(res).to.have.status(CREATED);

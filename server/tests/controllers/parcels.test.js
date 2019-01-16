@@ -90,13 +90,13 @@ describe('All endpoints concerning the parcel delivery orders', () => {
           expect(res).to.have.status(BAD_REQUEST);
           expect(res.body).to.be.an('object');
           expect(res.body).to.haveOwnProperty('message');
-          expect(res.body.message).to.contain('phone is required');
+          expect(res.body.message).to.contain('(unique, 9 min, 14 max)');
           return done();
         })
         .catch(err => done(err));
     });
 
-    it("should return an error if the recipeint_phone doesn't match the following pattern:(unique, 10 min, 14 max) digits and/or starts with (+) symbol, STATUS [BAD_REQUEST]", done => {
+    it("should return an error if the recipeint_phone doesn't match the following pattern:(unique, 9 min, 14 max) digits and/or starts with (+) symbol, STATUS [BAD_REQUEST]", done => {
       const data = { ...newParcel, recipient_phone: 78965 };
       chai
         .request(server)
@@ -107,9 +107,7 @@ describe('All endpoints concerning the parcel delivery orders', () => {
           expect(res).to.have.status(BAD_REQUEST);
           expect(res.body).to.be.an('object');
           expect(res.body).to.haveOwnProperty('message');
-          expect(res.body.message).to.contain(
-            '(unique, 10 min, 14 max) digits and/or starts with (+) symbol'
-          );
+          expect(res.body.message).to.contain('(unique, 9 min, 14 max)');
           return done();
         })
         .catch(err => done(err));

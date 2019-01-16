@@ -9,7 +9,7 @@ const schema = {
     .optional(),
   recipient_phone: Joi.string()
     .trim()
-    .regex(/^\+?[1-9]\d{1,14}$/)
+    .regex(/^\+?[1-9]\d{9,14}$/)
     .required()
     .min(10)
     .required(),
