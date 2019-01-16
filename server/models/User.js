@@ -3,14 +3,14 @@ import Database from '../database';
 
 // the schema definition of the user
 
-const schema = {
+const schema =  {
   full_name: Joi.string()
     .trim()
     .required()
     .min(3),
   phone: Joi.string()
     .trim()
-    .regex(/^\+?[1-9]\d{1,14}$/)
+    .regex(/^\+?[1-9]\d{9,14}$/)
     .required()
     .min(10),
   isAdmin: Joi.boolean()
@@ -21,8 +21,8 @@ const schema = {
     .email({ minDomainAtoms: 2 })
     .required(),
   password: Joi.string()
-    .trim() // Seven characters min, at least one[uppercase,lowercase,number]
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{7,}$/)
+    .trim() // (uppercase, lowercase, number, symbol) = 1+, (long) = 7+
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{7,})/)
     .required(),
   avatar: Joi.string()
     .trim()

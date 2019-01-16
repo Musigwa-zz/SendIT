@@ -10,90 +10,97 @@
       href="../../assets/icons/favicon.ico"
       type="image/x-icon"
     />
-    <script src="../../js/signup.js"></script>
     <title>SignUp</title>
+    <script src="../../js/auth/signup.js"></script>
   </head>
 
   <body>
     <section class="modal" id="new-order">
       <p class="modal-header">create an account to join us</p>
-      <form
-        class="modal-body"
-        method="POST"
-        action="localhost:5070/api/v1/auth/signup"
-      >
+      <form class="modal-body">
         <div class="input-group">
           <div class="input-group-addon">
-            <img src="../../assets/icons/person.png" alt="" />
+            <img src="../../assets/icons/person.png" alt="icon" />
           </div>
           <input
             class="modal-form-control"
-            placeholder="Full name"
+            placeholder="Full name ex: HIRWA Oscar"
             name="full_name"
+            oninput="onChangeText(this.id)"
+            autocomplete="name"
             required
             id="full_name"
             type="text"
           />
+          <h2 id="check" style="color:darkorange">*</h3>
         </div>
+
         <div class="input-group">
           <div class="input-group-addon">
-            <img src="../../assets/icons/email.png" alt="" />
+            <img src="../../assets/icons/email.png" alt="icon" />
           </div>
           <input
             class="modal-form-control"
-            placeholder="Email"
+            placeholder="Email ex: me@gmail.com"
             name="email"
+            inputmode="email"
+            oninput="onChangeText(this.id)"
+            autocomplete="email"
             id="email"
             required
             type="email"
           />
+          <h2 id="check" style="color:darkorange">*</h3>
         </div>
         <div class="input-group">
           <div class="input-group-addon">
-            <img src="../../assets/icons/call.png" alt="" />
+            <img src="../../assets/icons/call.png" alt="icon" />
           </div>
           <input
             class="modal-form-control"
-            placeholder="Phone number"
+            placeholder="Telephone ex: +250783624212"
             name="phone"
+            oninput="onChangeText(this.id)"
             id="phone"
+            inputmode="tel"
+            autocomplete="tel"
             required
             type="tel"
           />
+          <h2 id="check" style="color:darkorange">*</h3>
         </div>
         <div class="input-group">
           <div class="input-group-addon">
-            <img src="../../assets/icons/lock.png" alt="" />
+            <img src="../../assets/icons/lock.png" alt="icon" />
           </div>
           <input
             class="modal-form-control"
             placeholder="Password"
             name="password"
+            oninput="onChangeText(this.id)"
             id="password"
             required
             type="password"
           />
+          <h2 id="check" style="color:darkorange">*</h3>
         </div>
         <div class="input-group">
           <div class="input-group-addon">
-            <img src="../../assets/icons/lock.png" alt="" />
+            <img src="../../assets/icons/lock.png" alt="icon" />
           </div>
           <input
             class="modal-form-control"
             placeholder="Confirm password"
-            name="c-password"
-            id="c-password"
+            name="confirm"
+            oninput="onChangeText(this.id)"
+            id="confirm"
             required
-            type="c-password"
+            type="password"
           />
+          <h2 id="check" style="color:darkorange">*</h2>
         </div>
         <div class="submit-wrap">
-          <button
-            class="submit-btn"
-            type="submit"
-            value="submit"
-            onclick="createAccount()"
-          >
+          <button class="submit-btn" onclick="createAccount()">
             <img class="fab-icon" src="../../assets/icons/confirm.png " alt="logo" />
             <p>submit</p>
           </button>

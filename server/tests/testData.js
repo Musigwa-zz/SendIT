@@ -13,19 +13,19 @@ const newUser = [
     full_name: 'Gloria ATETE',
     phone: '+250725464556',
     email: 'gloria@gmail.com',
-    password: 'secret742SENDIT'
+    password: 'secret@742SENDIT'
   },
   {
     full_name: 'KAGABO Eric',
     phone: '+250783198552',
     email: 'kagabo@gmail.com',
-    password: 'secret742SENDIT'
+    password: 'secret@742SENDIT'
   },
   {
     full_name: 'TUYISENGE Claude',
     phone: '+250753128552',
     email: 'tuyisenge@hotmail.com',
-    password: 'secret742SENDIT'
+    password: 'secret@742SENDIT'
   }
 ];
 

@@ -54,4 +54,4 @@ Or if you want to contribute to this repo, please pull the request to join me.
 1. Email: pacifique.musigwa@gmail.com
 2. Twitter: #PacificMusigwa
 
-### Thanks all my followers and just feel free to raise questions if any
+### Thanks all, don't hesitate to raise questions if any

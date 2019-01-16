@@ -1,18 +1,14 @@
-const BaseURL = '';
-export default class Request {
-  static get(endPoint = '', headers = {}) {
-    return new Promise((resolve, reject) => {
-      fetch(`${BaseURL}${endPoint}`, {
-        method: 'GET',
-        headers: { ...headers, 'Content-Type': 'application/json' },
-        mode: 'cors',
-        cache: 'default'
-      })
-        .then(res => resolve({ ...res.body, ...res.headers }))
-        .catch(error => reject(error));
+export default class Helpers {
+  static baseURL = 'http://127.0.0.1:5070/api/v1';
+
+  static get(endPoint = this.baseURL, headers = {}) {
+    return fetch(`${this.baseURL}${endPoint}`, {
+      method: 'GET',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      mode: 'cors',
+      cache: 'default'
     });
   }
-
   //   static postData(endPoint, userData, met = 'POST', headers = null) {
   //     return new Promise((resolve, reject) => {
   //       fetch(BaseURL + endPoint, {

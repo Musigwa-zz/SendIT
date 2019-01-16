@@ -1,6 +1,6 @@
 const baseUrl = 'http://127.0.0.1:5070/api/v1/parcels';
 const loginUrl = '../../pages/auth/login.html';
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imdsb3JpYUBnbWFpbC5jb20iLCJpZCI6MTcsImlzYWRtaW4iOmZhbHNlLCJpYXQiOjE1NDU1MDQ1NTEsImV4cCI6MTU0NTUwODE1MX0.krptk_Dm5o90i8i81Khc0L1C8cadST3JlsGZEpBfgNo';
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImN5ZXphQGdtYWlsLmNvbSIsImlkIjozLCJpc2FkbWluIjpmYWxzZSwiaWF0IjoxNTQ3NjU3MTM0LCJleHAiOjE1NDc2NjA3MzR9.ABhOa14B3y9ytw0O2H8OF1T9Ou7lzJh1hWThC0CQTwg';
 let toShow;
 const toggleToast = (message, options = { expiresIn: 6000, type: 'warn' }) => {
   const { expiresIn = 6000, type = 'warn' } = options;
