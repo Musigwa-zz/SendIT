@@ -17,7 +17,7 @@ const valid = (itemId, value = '') => {
       const { value: password } = document.getElementById('password');
       return {
         status: valid('password', password).status && value === password,
-        message: 'Please double check the passwords equality.'
+        message: "Passwords don't match."
       };
     case 'email':
       regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -58,50 +58,46 @@ const onChangeText = elmtId => {
 };
 
 const createAccount = () => {
-  const template = {
+  const user = {
     full_name: '',
     phone: '',
     password: '',
     email: '',
     confirm: ''
   };
-  for (const propname in template) {
-    const { value } = document.getElementById(propname);
-    if (!valid(propname, value).status) return;
-    template[propname] = value;
+  for (const propName in user) {
+    const { value } = document.getElementById(propName);
+    if (!valid(propName, value).status) return;
+    user[propName] = value;
   }
-  const { confirm, user } = template;
-  console.log(user);
-  // fetch(baseUrl, {
-  //   method: 'POST',
-  //   headers: { 'Content-type': 'application/json' },
-  //   body: JSON.stringify(user),
-  //   mode: 'cors',
-  //   cache: 'default'
-  // })
-  //   .then(async res => {
-  //     console.log(res.headers);
-  //     const body = await res.json();
-  //     const { message = '' } = body;
-  //     if (res.status === 201) {
-  //       // save the token into localStorage and redirect the user to the index page
-  //       window.location = indexUrl;
-  //     } else if (res.status === 400) {
-  //       //  toggleToast(body.message);
-  //     } else if (res.status === 500) {
-  //       // toggleToast(
-  //       //   'Something went wrong! try again or contact the administrator.',
-  //       //   {
-  //       //     expiresIn: false
-  //       //   }
-  //       // );
-  //     }
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //     // toggleToast('Something went wrong. Contact the administrator.', {
-  //     //   type: 'error',
-  //     //   expiresIn: false
-  //     // });
-  //   });
+  delete user.confirm;
+  fetch(baseUrl, {
+    method: 'POST',
+    headers: { 'Content-type': 'application/json' },
+    body: JSON.stringify(user),
+    mode: 'cors',
+    cache: 'default'
+  })
+    .then(async res => {
+      const body = await res.json();
+      switch (res.status) {
+        case 201:
+          await localStorage.setItem('token', body.token);
+          window.location = indexUrl;
+          break;
+
+        default:
+          break;
+      }
+      console.log('RESULTS:', res);
+    })
+    .catch(err => {
+      console.log('ERROR:', err);
+    });
 };
+
+const sbutton = document.querySelector('.submit-btn');
+sbutton.addEventListener('click', e => {
+  e.preventDefault();
+  createAccount();
+});

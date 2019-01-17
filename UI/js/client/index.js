@@ -1,14 +1,14 @@
 const baseUrl = 'http://127.0.0.1:5070/api/v1/parcels';
 const loginUrl = '../../pages/auth/login.html';
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImN5ZXphQGdtYWlsLmNvbSIsImlkIjozLCJpc2FkbWluIjpmYWxzZSwiaWF0IjoxNTQ3NjU3MTM0LCJleHAiOjE1NDc2NjA3MzR9.ABhOa14B3y9ytw0O2H8OF1T9Ou7lzJh1hWThC0CQTwg';
+const token = localStorage.getItem('token');
 let toShow;
 const toggleToast = (message, options = { expiresIn: 6000, type: 'warn' }) => {
   const { expiresIn = 6000, type = 'warn' } = options;
-  let bgcolor = 'darkorange';
+  let bgColor = 'darkorange';
   const toast = document.getElementById('toast-div');
-  if (type.includes('suc')) bgcolor = 'green';
-  else if (type.includes('er')) bgcolor = 'red';
-  toast.style.backgroundColor = bgcolor;
+  if (type.includes('suc')) bgColor = 'green';
+  else if (type.includes('er')) bgColor = 'red';
+  toast.style.backgroundColor = bgColor;
   toast.classList.add('show');
   toast.innerHTML = message;
   if (expiresIn !== false) {
