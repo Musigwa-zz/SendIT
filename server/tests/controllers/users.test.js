@@ -20,7 +20,7 @@ before(done => {
     .post(`${baseUrl}/auth/login`)
     .send({ email, password })
     .then(res => {
-      adminToken = res.header['x-auth-token'];
+      adminToken = res.body.token;
       return done();
     })
     .catch(err => done(err));

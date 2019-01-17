@@ -40,8 +40,8 @@ describe('Authentication/Authorization [signup, login]', () => {
         .send(newUser[0])
         .then(res => {
           expect(res).to.have.status(CREATED);
-          expect(res.header)
-            .to.haveOwnProperty('x-auth-token')
+          expect(res.body)
+            .to.haveOwnProperty('token')
             .to.be.a('string');
           return done();
         })
@@ -73,8 +73,8 @@ describe('Authentication/Authorization [signup, login]', () => {
         .attach('avatar', fs.readFileSync('avatar.jpg'))
         .then(res => {
           expect(res).to.have.status(CREATED);
-          expect(res.header)
-            .to.haveOwnProperty('x-auth-token')
+          expect(res.body)
+            .to.haveOwnProperty('token')
             .to.be.a('string');
           return done();
         })
@@ -94,8 +94,8 @@ describe('Authentication/Authorization [signup, login]', () => {
           expect(res).to.have.status(OK);
           expect(res.body).to.be.an('object');
           expect(res.body).to.haveOwnProperty('message');
-          expect(res.header)
-            .to.haveOwnProperty('x-auth-token')
+          expect(res.body)
+            .to.haveOwnProperty('token')
             .to.be.a('string');
           expect(res.body.message).to.contain('success');
           return done();

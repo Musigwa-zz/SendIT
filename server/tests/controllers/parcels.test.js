@@ -391,14 +391,13 @@ describe('All endpoints concerning the parcel delivery orders', () => {
         .post(`${baseUrl}/auth/login`)
         .send({ email, password })
         .then(res => {
-          adminToken = res.header['x-auth-token'];
+          adminToken = res.body.token;
           return done();
         })
         .catch(err => done(err));
     });
     describe('/PUT change the status of a parcel delivery order', () => {
       it('should return an updated parcel object, STATUS [CREATED]', done => {
-        // console.log('ADMIN TOKEN:', adminToken);
         chai
           .request(server)
           .put(`${url}/2/status`)
