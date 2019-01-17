@@ -1,4 +1,5 @@
 node_modules
+.vscode
 npm-debug.*
 yarn.*
 yarn-error.*
@@ -6,7 +7,6 @@ coverage
 .nyc_output
 AWARE.md
 PR.md
-.env
-# server/database/migrations/createAdmin.js
-config/test.json
 server/database/migrations/seeds.sql
+server/database/migrations/createAdmin.js
+config/test.json

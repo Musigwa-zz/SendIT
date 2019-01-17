@@ -26,10 +26,10 @@ const createUser = (req, res) => {
         const { password: pass, ...others } = results;
         if (err) return Helpers.respondWithError(res);
         User.save({ ...others, password: hashed })
-          .then(user => res
-            .header('x-auth-token', Helpers.createToken(user))
-            .status(CREATED)
-            .json({ message: 'User created successfully' }))
+          .then(user => res.status(CREATED).json({
+            token: Helpers.createToken(user),
+            message: 'User created successfully'
+          }))
           .catch(error => Helpers.respondWithError(res, { ...error, status: BAD_REQUEST }));
       });
     })
@@ -42,10 +42,10 @@ const login = (req, res) => {
   const { email, password = '' } = req.body;
   User.find({ email })
     .then(users => bcrypt.compare(password, users[0].password, (err, same) => (same
-      ? res
-        .status(OK)
-        .header('x-auth-token', Helpers.createToken(users[0]))
-        .json({ message: 'Login successfull' })
+      ? res.status(OK).json({
+        token: Helpers.createToken(users[0]),
+        message: 'Login successful'
+      })
       : Helpers.respondWithError(res, {
         ...err,
         status: UNAUTHORIZED,
