@@ -1,22 +1,10 @@
+import Helpers from '../helpers/index.js';
+
 const baseUrl = 'http://127.0.0.1:5070/api/v1/parcels';
 const loginUrl = '../../pages/auth/login.html';
 const token = localStorage.getItem('token');
+
 let toShow;
-const toggleToast = (message, options = { expiresIn: 6000, type: 'warn' }) => {
-  const { expiresIn = 6000, type = 'warn' } = options;
-  let bgColor = 'darkorange';
-  const toast = document.getElementById('toast-div');
-  if (type.includes('suc')) bgColor = 'green';
-  else if (type.includes('er')) bgColor = 'red';
-  toast.style.backgroundColor = bgColor;
-  toast.classList.add('show');
-  toast.innerHTML = message;
-  if (expiresIn !== false) {
-    toast.style.animation = `fadeInOut ${expiresIn / 1000}s`;
-    toast.classList.add('fade');
-    setTimeout(() => toast.classList.remove('show'), expiresIn);
-  }
-};
 
 fetch(baseUrl, {
   method: 'GET',
@@ -33,7 +21,7 @@ fetch(baseUrl, {
     const weightUnit = 'Kg';
     const { parcels = [], message = '' } = body;
     if (res.status === 200) {
-      toggleToast(message, { type: 'success', expiresIn: 3000 });
+      Helpers.toggleToast(message, { type: 'success', expiresIn: 3000 });
       const overview = [0, 0, 0, 0];
       toShow = `
             <div class="lg-card-content"><div class="data-table">
@@ -101,14 +89,7 @@ fetch(baseUrl, {
       });
       document.getElementById('table-container').innerHTML = toShow;
     } else if (res.status === 401) window.location = loginUrl;
-    else if (res.status === 404) toggleToast(`${message}. Use the bottom-right button to create one.`);
-    else if (res.status === 500) {
-      toggleToast('Something went wrong! try again or contact the administrator.', {
-        expiresIn: false
-      });
-    }
+    else if (res.status === 404) Helpers.toggleToast(`${message}. Use the bottom-right button to create one.`);
+    else if (res.status >= 500) Helpers.toggleToast(undefined, { expiresIn: false });
   })
-  .catch(() => toggleToast('Something went wrong. Contact the administrator.', {
-    type: 'error',
-    expiresIn: false
-  }));
+  .catch(() => Helpers.toggleToast(undefined, { type: 'error', expiresIn: false }));

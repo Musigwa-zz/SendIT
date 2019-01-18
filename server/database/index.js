@@ -11,7 +11,7 @@ export default class Database {
     this.schema = schema;
   }
 
-  // UTIL METHOD FOR CUATOMIZING THE ERROR //
+  // UTIL METHOD FOR CUSTOMIZING THE ERROR //
 
   rejectWithError(reject, err) {
     const { detail: message, ...rest } = err;

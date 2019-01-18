@@ -18,8 +18,8 @@ export default class Helpers {
     let { message = 'Something went wrong!..' } = error;
     const { status = INTERNAL_SERVER_ERROR } = error;
     if (message.includes('phone')) message = 'The phone number should be(unique, 9 min, 14 max). Country code is optional.';
-    if (message.includes('password')) message = 'The password should be 7 chars min with at least one(uppercase,lowercase,number,symbol)';
-    if (status === UNAUTHORIZED) message = 'email or password mismatch!';
+    else if (message.includes('password')) message = 'The password should be 7 chars min with at least one(uppercase,lowercase,number,symbol)';
+    if (status === UNAUTHORIZED) message = 'Email or password mismatch!';
     debug(error);
     return res.status(status).json({ message });
   }
