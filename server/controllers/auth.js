@@ -44,6 +44,7 @@ const login = (req, res) => {
     .then(users => bcrypt.compare(password, users[0].password, (err, same) => (same
       ? res.status(OK).json({
         token: Helpers.createToken(users[0]),
+        admin: users[0].isadmin,
         message: 'Login successful'
       })
       : Helpers.respondWithError(res, {
