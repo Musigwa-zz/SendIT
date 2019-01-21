@@ -1,11 +1,18 @@
 import Helpers from '../helpers/index.js';
 
+window.onChangeText = elementId => Helpers.onChangeText(elementId);
+
 const login = () => {
   const user = { password: '', email: '' };
-  for (const propName in user) {
-    const { value } = document.getElementById(propName);
-    if (!Helpers.valid(propName, value).status) return;
-    user[propName] = value;
+  for (const id in user) {
+    const element = document.getElementById(id);
+    const message = Helpers.valid(id, element.value);
+    if (message !== '') {
+      element.reportValidity();
+      element.setCustomValidity(`The ${id} is required.`);
+      return;
+    }
+    user[id] = element.value;
   }
   fetch(`${Helpers.baseURL()}/auth/login`, {
     method: 'POST',

@@ -21,18 +21,20 @@
       <div class="modal-body">
         <div class="input-group">
           <div class="input-group-addon">
-            <img src="../../assets/icons/email.png" alt="" />
+            <img src="../../assets/icons/email.png" alt="icon" />
           </div>
           <input
             class="modal-form-control"
             placeholder="Email ex: me@gmail.com"
             name="email"
             inputmode="email"
+            oninput="onChangeText(this.id)"
             autocomplete="email"
             id="email"
             required
             type="email"
           />
+          <h2 id="check" style="color:darkorange">*</h3>
         </div>
         <div class="input-group">
           <div class="input-group-addon">
@@ -42,17 +44,17 @@
             class="modal-form-control"
             placeholder="Password"
             name="password"
-            oninput="onChangeText(this.id)"
             id="password"
             required
             type="password"
           />
+          <h2 id="check" style="color:darkorange">*</h3>
         </div>
         <div class="submit-wrap">
-          <a class="submit-btn" href="../client/index.html">
+          <button class="submit-btn">
             <img class="fab-icon" src="../../assets/icons/confirm.png " alt="logo" />
             <p>login</p>
-          </a>
+          </button>
           <span>Don't have an account yet?</span>
           <a class="local" href="signup.html"> Create it </a>
         </div>

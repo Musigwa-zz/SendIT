@@ -9,3 +9,8 @@ const openModal = id => {
 const closeModal = id => {
   document.getElementById(id).style.display = 'none';
 };
+
+const logout = async () => {
+  await localStorage.removeItem('token');
+  window.location = '../../index.html';
+};
