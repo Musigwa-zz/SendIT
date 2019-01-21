@@ -28,6 +28,7 @@
             placeholder="Full name ex: HIRWA Oscar"
             name="full_name"
             oninput="onChangeText(this.id)"
+            onfocus="focused(this.id)"
             autocomplete="name"
             required
             id="full_name"
@@ -45,6 +46,7 @@
             placeholder="Email ex: me@gmail.com"
             name="email"
             inputmode="email"
+            onfocus="focused(this.id)"
             oninput="onChangeText(this.id)"
             autocomplete="email"
             id="email"
@@ -62,6 +64,7 @@
             placeholder="Telephone ex: +250783624212"
             name="phone"
             oninput="onChangeText(this.id)"
+            onfocus="focused(this.id)"
             id="phone"
             inputmode="tel"
             autocomplete="tel"
@@ -79,6 +82,7 @@
             placeholder="Password"
             name="password"
             oninput="onChangeText(this.id)"
+            onfocus="focused(this.id)"
             id="password"
             required
             type="password"
@@ -94,6 +98,7 @@
             placeholder="Confirm password"
             name="confirm"
             oninput="onChangeText(this.id)"
+            onfocus="focused(this.id)"
             id="confirm"
             required
             type="password"

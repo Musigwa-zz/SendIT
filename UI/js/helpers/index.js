@@ -5,38 +5,70 @@ export default class Helpers {
 
   static valid(itemId, value = '') {
     value.trim();
-    let regex;
-    const res = { status: false, message: '' };
     switch (itemId) {
       case 'full_name':
         const [first = '', last = ''] = value.split(' ');
-        regex = /^[A-Z][A-Z '.-]{1,40}$/i;
-        return {
-          status: regex.test(first) && regex.test(last),
-          message: 'The (first and last) name should be separated by a single space.'
-        };
+        return /^[A-Z][A-Z '.-]{1,40}$/i.test(first)
+          && /^[A-Z][A-Z '.-]{1,40}$/i.test(last)
+          ? ''
+          : 'The (first and last) name should be separated by a single space.';
+
       case 'confirm':
         const { value: password } = document.getElementById('password');
-        return {
-          status: this.valid('password', password).status && value === password,
-          message: "Passwords don't match."
-        };
+        return this.valid('password', password) === '' && value === password
+          ? ''
+          : 'Make sure both passwords are equal.';
       case 'email':
-        regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        res.message = 'Please input a valid email.';
-        break;
+        return /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+          value
+        )
+          ? ''
+          : 'Please input a valid email.';
+
       case 'phone':
-        regex = /^\+?[1-9]\d{8,14}$/;
-        res.message = 'The phone number should be(unique, 9 min, 14 max). Country code is optional.';
-        break;
+        return /^\+?[1-9]\d{8,14}$/.test(value)
+          ? ''
+          : 'The phone number should be(unique, 9 min, 14 max). Country code is optional.';
       case 'password':
-        regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{7,})/;
-        res.message = 'The password should be 7 chars min with at least one(uppercase,lowercase,number,symbol).';
-        break;
+        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{7,})/.test(
+          value
+        )
+          ? ''
+          : 'The password should be 7 chars min with at least one(uppercase,lowercase,number,symbol).';
       default:
         break;
     }
-    return { ...res, status: regex.test(value) };
+  }
+
+  static onChangeText(elementId) {
+    const element = document.getElementById(elementId);
+    const { value, parentElement } = element;
+    const message = this.valid(elementId, value);
+    const check = parentElement.lastElementChild;
+    if (!value.length) {
+      check.innerHTML = '*';
+      check.style.color = 'darkorange';
+      check.style.fontSize = '24px';
+    }
+    if (message === '') {
+      check.innerHTML = '&checkmark;';
+      check.style.color = 'green';
+      check.style.fontSize = '20px';
+      element.setCustomValidity('');
+    } else {
+      check.innerHTML = '&cross;';
+      check.style.color = 'red';
+      check.style.fontSize = '15px';
+    }
+  }
+
+  static onFocus(elementId) {
+    const element = document.getElementById(elementId);
+    const message = Helpers.valid(elementId, element.value);
+    if (message !== '') {
+      element.reportValidity();
+      element.setCustomValidity(message);
+    }
   }
 
   static toggleToast(
