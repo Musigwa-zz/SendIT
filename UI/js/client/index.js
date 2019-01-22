@@ -1,12 +1,9 @@
 import Helpers from '../helpers/index.js';
 
-const baseUrl = 'http://127.0.0.1:5070/api/v1/parcels';
-const loginUrl = '../../pages/auth/login.html';
 const token = localStorage.getItem('token');
-
 let toShow;
 
-fetch(baseUrl, {
+fetch(`${Helpers.baseURL()}/parcels`, {
   method: 'GET',
   headers: {
     'Content-type': 'application/json',
@@ -88,7 +85,7 @@ fetch(baseUrl, {
         document.getElementsByClassName('data').item(index).innerHTML = value;
       });
       document.getElementById('table-container').innerHTML = toShow;
-    } else if (res.status === 401) window.location = loginUrl;
+    } else if (res.status === 401) window.location = '../../pages/auth/login.html';
     else if (res.status === 404) Helpers.toggleToast(`${message}. Use the bottom-right button to create one.`);
     else if (res.status >= 500) Helpers.toggleToast(undefined, { expiresIn: false });
   })

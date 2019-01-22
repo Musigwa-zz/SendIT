@@ -525,6 +525,51 @@ a {
   }
 }
 
+/* SPINNER/ LOADING COMPONENT */
+.loader {
+  border: 7px solid whitesmoke;
+  border-radius: 50%;
+  border-top: 7px solid green;
+  width: 70px;
+  height: 70px;
+  -webkit-animation: spin 0.7s linear infinite; /* Safari */
+  animation: spin 0.7s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loader-container {
+  position: absolute;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.1);
+  bottom: 0;
+  right: 0;
+}
+.loader-container.active {
+  display: flex;
+  z-index: 9999;
+}
 /* media queries for small screen (kindles,ipads,tablets) */
 
 @media only screen and (min-device-width: 600px) and (max-device-width: 1024px) {

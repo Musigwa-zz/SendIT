@@ -26,6 +26,7 @@
 
   <body>
     <script type="module" src="../../js/client/index.js"></script>
+    <script type="module" src="../../js/client/new-order.js"></script>
     <section class="top-nav">
       <div class="top-nav-right">
         <div class="notif-container">
@@ -169,6 +170,7 @@
     </section>
 
     <section class="modal add-new" id="new-order">
+      <div id="loader" class="loader-container"><span class="loader"></span></div>
       <div class="modal-header">
         Create a new parcel delivery order
         <img
@@ -183,39 +185,80 @@
           <div class="input-group-addon">
             <img src="../../assets/icons/home.png" alt="" />
           </div>
-          <input class="modal-form-control" placeholder="Pick up location" />
+          <input
+            class="modal-form-control"
+            placeholder="Pick up location"
+            name="origin"
+            oninput="onChangeText(this.id)"
+            onfocus="focused(this.id)"
+            id="origin"
+            required
+            type="text"
+          />
+          <h2 id="check" style="color:rgb(255, 102, 0)">*</h2>
         </div>
         <div class="input-group">
           <div class="input-group-addon">
             <img src="../../assets/icons/destination.png" alt="" />
           </div>
-          <input class="modal-form-control" placeholder="Destination" />
+          <input
+            class="modal-form-control"
+            placeholder="Destination"
+            name="destination"
+            oninput="onChangeText(this.id)"
+            onfocus="focused(this.id)"
+            id="destination"
+            required
+            type="text"
+          />
+          <h2 id="check" style="color:rgb(255, 102, 0)">*</h2>
         </div>
 
         <div class="input-group">
           <div class="input-group-addon">
             <img src="../../assets/icons/food-scale-tool.png" alt="" />
           </div>
-          <input class="modal-form-control" placeholder="Weight in Kilograms" />
+          <input
+            class="modal-form-control"
+            placeholder="Weight in Kilograms"
+            name="weight"
+            oninput="onChangeText(this.id)"
+            onfocus="focused(this.id)"
+            id="weight"
+            required
+            type="text"
+          />
+          <h2 id="check" style="color:rgb(255, 102, 0)">*</h2>
         </div>
-
         <div class="input-group">
           <div class="input-group-addon">
             <img src="../../assets/icons/balance.png" alt="" />
           </div>
           <input
             disabled
-            style="background-color:aqua;"
+            style="background-color:#07ee07"
             class="modal-form-control"
             value="Must pay: 0.00 Rwf"
           />
+          <h2 id="check" style="color:white">*</h2>
         </div>
+        <!-- loading spinner -->
         <p class="input-separator">Beneficiary information</p>
         <div class="input-group">
           <div class="input-group-addon">
             <img src="../../assets/icons/person.png" alt="" />
           </div>
-          <input class="modal-form-control" placeholder="Full name  ex: musigwa" />
+          <input
+            class="modal-form-control"
+            placeholder="Full name  ex: HIRWA Oscar"
+            name="name"
+            oninput="onChangeText(this.id)"
+            onfocus="focused(this.id)"
+            id="recipient_name"
+            required
+            type="text"
+          />
+          <h2 id="check" style="color:rgb(255, 102, 0)">*</h2>
         </div>
         <div class="input-group">
           <div class="input-group-addon">
@@ -224,12 +267,19 @@
           <input
             class="modal-form-control"
             placeholder="Telephone ex: +250784567556"
+            name="phone"
+            oninput="onChangeText(this.id)"
+            onfocus="focused(this.id)"
+            id="recipient_phone"
+            required
+            type="tel"
           />
+          <h2 id="check" style="color:rgb(255, 102, 0)">*</h2>
         </div>
-        <a class="modal-submit" href="#">
+        <button class="modal-submit create-order" href="#">
           <img class="fab-icon" src="../../assets/icons/confirm.png" alt="logo" />
           <p>submit</p>
-        </a>
+        </button>
       </div>
     </section>
 
