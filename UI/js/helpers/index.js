@@ -5,38 +5,45 @@ export default class Helpers {
 
   static valid(itemId, value = '') {
     value.trim();
-    switch (itemId) {
-      case 'full_name':
-        const [first = '', last = ''] = value.split(' ');
-        return /^[A-Z][A-Z '.-]{1,40}$/i.test(first)
-          && /^[A-Z][A-Z '.-]{1,40}$/i.test(last)
-          ? ''
-          : 'The (first and last) name should be separated by a single space.';
-
-      case 'confirm':
-        const { value: password } = document.getElementById('password');
-        return this.valid('password', password) === '' && value === password
-          ? ''
-          : 'Make sure both passwords are equal.';
-      case 'email':
-        return /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-          value
-        )
-          ? ''
-          : 'Please input a valid email.';
-
-      case 'phone':
-        return /^\+?[1-9]\d{8,14}$/.test(value)
-          ? ''
-          : 'The phone number should be(unique, 9 min, 14 max). Country code is optional.';
-      case 'password':
-        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{7,})/.test(
-          value
-        )
-          ? ''
-          : 'The password should be 7 chars min with at least one(uppercase,lowercase,number,symbol).';
-      default:
-        break;
+    if (itemId.includes('name')) {
+      const [first = '', last = ''] = value.split(' ');
+      return /^[A-Z][A-Z '.-]{1,40}$/i.test(first)
+        && /^[A-Z][A-Z '.-]{1,40}$/i.test(last)
+        ? ''
+        : 'The (first and last) name should be separated by a single space.';
+    }
+    if (itemId.includes('confirm')) {
+      const { value: password } = document.getElementById('password');
+      return this.valid('password', password) === '' && value === password
+        ? ''
+        : 'Make sure both passwords are equal.';
+    }
+    if (itemId.includes('email')) {
+      return /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+        value
+      )
+        ? ''
+        : 'Please input a valid email.';
+    }
+    if (itemId.includes('phone')) {
+      return /^\+?[1-9]\d{8,14}$/.test(value)
+        ? ''
+        : 'The phone number should be(unique, 9 min, 14 max). Country code is optional.';
+    }
+    if (itemId.includes('password')) {
+      return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{7,})/.test(
+        value
+      )
+        ? ''
+        : 'The password should be 7 chars min with at least one(uppercase,lowercase,number,symbol).';
+    }
+    if (itemId.includes('destination') || itemId.includes('origin')) {
+      return value.length > 3 ? '' : `The ${itemId} must be at least 3 chars long.`;
+    }
+    if (itemId.includes('weight')) {
+      return typeof parseFloat(value) === 'number' && value > 0
+        ? ''
+        : `The ${itemId} must be a positive number.`;
     }
   }
 
@@ -64,7 +71,7 @@ export default class Helpers {
 
   static onFocus(elementId) {
     const element = document.getElementById(elementId);
-    const message = Helpers.valid(elementId, element.value);
+    const message = this.valid(elementId, element.value);
     if (message !== '') {
       element.reportValidity();
       element.setCustomValidity(message);

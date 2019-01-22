@@ -10,7 +10,13 @@ const {
 
 const createParcel = (req, res) => {
   const { isadmin, id: sender } = req.user;
-  Parcel.validate({ ...req.body, sender })
+  const { weight, origin } = req.body;
+  Parcel.validate({
+    ...req.body,
+    sender,
+    price: (parseFloat(weight) * 10.4).toFixed(2),
+    present_location: origin
+  })
     .then(results => {
       if (!isadmin) {
         Parcel.save(results)

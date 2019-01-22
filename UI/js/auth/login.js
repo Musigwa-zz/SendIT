@@ -1,6 +1,7 @@
 import Helpers from '../helpers/index.js';
 
 window.onChangeText = elementId => Helpers.onChangeText(elementId);
+window.focused = elementId => Helpers.onFocus(elementId);
 
 const login = () => {
   const user = { password: '', email: '' };
