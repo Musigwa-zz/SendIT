@@ -2,7 +2,8 @@ const cancelOrder = element => {
   element.parentElement.parentElement.hidden = true;
 };
 
-const openModal = id => {
+const openModal = (id, parcelId = 0) => {
+  if (parcelId) document.getElementById('parcel-id').value = parcelId;
   document.getElementById(id).style.display = 'flex';
 };
 

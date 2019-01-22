@@ -38,12 +38,14 @@ export default class Helpers {
         : 'The password should be 7 chars min with at least one(uppercase,lowercase,number,symbol).';
     }
     if (itemId.includes('destination') || itemId.includes('origin')) {
-      return value.length > 3 ? '' : `The ${itemId} must be at least 3 chars long.`;
+      return value.length > 3
+        ? ''
+        : `The ${itemId} should be at least 3 chars long.`;
     }
     if (itemId.includes('weight')) {
       return typeof parseFloat(value) === 'number' && value > 0
         ? ''
-        : `The ${itemId} must be a positive number.`;
+        : `The ${itemId} should be a positive number.`;
     }
   }
 

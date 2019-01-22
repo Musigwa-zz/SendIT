@@ -56,7 +56,7 @@ fetch(`${Helpers.baseURL()}/parcels`, {
         toShow += hidden
           ? ''
           : ` <img
-                onclick="openModal('edit-dest')"
+                onclick="openModal('edit-dest',${parcel.id})"
                 class="hover"
                 src="../../assets/icons/edit.png"
                 alt="lg"
