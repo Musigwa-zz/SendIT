@@ -1,9 +1,10 @@
-const cancelOrder = element => {
-  element.parentElement.parentElement.hidden = true;
-};
-
 const openModal = (id, parcelId = 0) => {
-  if (parcelId) document.getElementById('parcel-id').value = parcelId;
+  if (parcelId) {
+    document.getElementById('parcel-id').value = parcelId;
+    document.getElementById(
+      'dest'
+    ).firstElementChild.innerHTML = `updating the order n\u00B0 ${parcelId}`;
+  }
   document.getElementById(id).style.display = 'flex';
 };
 

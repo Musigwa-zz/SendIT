@@ -72,6 +72,7 @@ fetch(`${Helpers.baseURL()}/parcels`, {
         toShow += hidden
           ? ''
           : `<img
+              onclick="cancelOrder(${parcel.id})"
               class="hover"
               src="../../assets/icons/x-button.png"
               alt="lg"
