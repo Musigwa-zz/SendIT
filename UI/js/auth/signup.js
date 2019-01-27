@@ -33,6 +33,7 @@ const createAccount = () => {
       const body = await res.json();
       if (res.status === 201) {
         await localStorage.setItem('token', body.token);
+        await localStorage.setItem('admin', body.admin);
         window.location = '../../pages/client/index.html';
       } else if (res.status === 400) Helpers.toggleToast(body.message);
       else if (res.status >= 500) Helpers.toggleToast(undefined, { type: 'error' });

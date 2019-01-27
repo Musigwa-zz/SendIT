@@ -26,6 +26,7 @@ const login = () => {
       const body = await res.json();
       if (res.status === 200) {
         await localStorage.setItem('token', body.token);
+        await localStorage.setItem('admin', body.admin);
         const whom = body.admin ? 'admin' : 'client';
         window.location = `../../pages/${whom}/index.html`;
       } else if (res.status === 401) Helpers.toggleToast(body.message);

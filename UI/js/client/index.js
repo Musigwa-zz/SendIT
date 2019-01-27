@@ -1,6 +1,7 @@
 import Helpers from '../helpers/index.js';
 
 const token = localStorage.getItem('token');
+if (localStorage.getItem('admin') === false) window.location = '../../pages/auth/login.html';
 let toShow;
 
 fetch(`${Helpers.baseURL()}/parcels`, {

@@ -28,6 +28,7 @@ const createUser = (req, res) => {
         User.save({ ...others, password: hashed })
           .then(user => res.status(CREATED).json({
             token: Helpers.createToken(user),
+            admin: user.isadmin,
             message: 'User created successfully'
           }))
           .catch(error => Helpers.respondWithError(res, { ...error, status: BAD_REQUEST }));
